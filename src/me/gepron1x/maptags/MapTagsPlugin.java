@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,12 +23,12 @@ import me.gepron1x.maptags.events.InventoryListener;
 import me.gepron1x.maptags.utlis.MapTag;
 
 public class MapTagsPlugin extends JavaPlugin {
-    private MySQLWorker mySQL;
+	private MySQLWorker mySQL;
 	private static MapTagsPlugin instance;
 	private File customConfig = new File(getDataFolder(), "tags.yml");
 	private FileConfiguration mapTags;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
-	
+	private HashMap<UUID, MapTag> selectedTags = new HashMap<UUID, MapTag>();
 
 	public void onEnable() {
 		instance = this;
@@ -35,10 +37,8 @@ public class MapTagsPlugin extends JavaPlugin {
 		mySQL = new MySQLWorker();
 		mapTags = YamlConfiguration.loadConfiguration(customConfig);
 		saveCustomDefaultConfig();
-		send("&aPlugin enabled!");
-	//s
-
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+		send("&aPlugin enabled!");
 	}
 
 	public void onDisable() {
@@ -53,7 +53,6 @@ public class MapTagsPlugin extends JavaPlugin {
 		if (defConfigStream == null) {
 			return;
 		}
-
 		mapTags.setDefaults(
 				YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
 	}
@@ -65,13 +64,13 @@ public class MapTagsPlugin extends JavaPlugin {
 			getLogger().log(Level.SEVERE, "Could not save config to " + customConfig, ex);
 		}
 	}
-	
+
 	public void addTag(String id, String name, String lore, Player p) {
 		ItemStack e;
-		if(p.getInventory().getItemInMainHand() != null) {
+		if (p.getInventory().getItemInMainHand() != null) {
 			e = p.getInventory().getItemInMainHand();
 		} else {
-		e = new ItemStack(Material.BEDROCK);
+			e = new ItemStack(Material.BEDROCK);
 		}
 		maptags.add(new MapTag(id, name, lore, p.getUniqueId(), p.getLocation(), e));
 	}
@@ -93,7 +92,12 @@ public class MapTagsPlugin extends JavaPlugin {
 	public List<MapTag> getGlobalList() {
 		return maptags;
 	}
-public MySQLWorker getMySQL() {
-	return mySQL;
-}
+
+	public MySQLWorker getMySQL() {
+		return mySQL;
+	}
+
+	public HashMap<UUID, MapTag> getSelectedTags() {
+		return selectedTags;
+	}
 }
