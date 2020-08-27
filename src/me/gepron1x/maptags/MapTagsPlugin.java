@@ -1,6 +1,7 @@
 package me.gepron1x.maptags;
 
 import java.io.File;
+import me.gepron1x.maptags.utlis.MySQLWorker;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,19 +21,23 @@ import me.gepron1x.maptags.events.InventoryListener;
 import me.gepron1x.maptags.utlis.MapTag;
 
 public class MapTagsPlugin extends JavaPlugin {
-
+    private MySQLWorker mySQL;
 	private static MapTagsPlugin instance;
 	private File customConfig = new File(getDataFolder(), "tags.yml");
 	private FileConfiguration mapTags;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
+	
 
 	public void onEnable() {
 		instance = this;
+		this.saveDefaultConfig();
 		getCommand("maptag").setExecutor(new CommandManager());
+		mySQL = new MySQLWorker();
 		mapTags = YamlConfiguration.loadConfiguration(customConfig);
 		saveCustomDefaultConfig();
 		send("&aPlugin enabled!");
-		this.saveDefaultConfig();
+	
+
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 	}
 
@@ -88,4 +93,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	public List<MapTag> getGlobalList() {
 		return maptags;
 	}
+public MySQLWorker getMySQL() {
+	return mySQL;
+}
 }

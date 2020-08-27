@@ -18,45 +18,57 @@ import me.gepron1x.maptags.MapTagsPlugin;
 
 public class MySQLWorker {
 
-	private MapTagsPlugin plugin = MapTagsPlugin.getInstance();
+	private MapTagsPlugin plugin;
 	private String host, username, database, password, table;
 	private Connection connection;
-	private int port;
 
-	public MySQLWorker(MapTagsPlugin plugin) {
-		Statement statement = null;
-		this.plugin = plugin;
-		this.host = plugin.getConfig().getString("host").split(":")[0];
-		this.database = plugin.getConfig().getString("database");
-		this.port = Integer.parseInt(plugin.getConfig().getString("host").split(":")[1]);
-		this.username = plugin.getConfig().getString("username");
-		this.password = plugin.getConfig().getString("password");
+	public MySQLWorker() {
+	
+         plugin = MapTagsPlugin.getInstance();
+		this.host = plugin.getConfig().getString("mysql.host");
+		this.database = plugin.getConfig().getString("mysql.database");
+		this.username = plugin.getConfig().getString("mysql.username");
+		this.password = plugin.getConfig().getString("mysql.password");
 		this.table = "maptags";
-		try {
-			synchronized (this) {
-				if (connection != null && !connection.isClosed()) {
-					return;
-				}
-				Class.forName("com.mysql.jdbc.Driver");
-				setConnection(
-						DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database,
-								this.username, this.password));
+		final String hst = this.host;
+		final String db = this.database;
+		final String usr = this.username;
+		final String psw = this.password;
 
-				Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MYSQL CONNECTED");
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+			@Override
+			public void run() {
+				
+				try {
+					synchronized (this) {
+						if (connection != null && !connection.isClosed()) {
+							return;
+						}
+						Class.forName("com.mysql.jdbc.Driver");
+						setConnection(
+								DriverManager.getConnection("jdbc:mysql://" + hst + "/" + db,
+										usr, psw));
+
+						Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MYSQL CONNECTED");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				try {
+					Statement statement = connection.createStatement();
+					statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + "(`id` VARCHAR(5), " + " name VARCHAR(10), "
+							+ " lore TINYTEXT" + " location VARCHAR(30), " + " owner VARCHAR(36)," + " icon BLOB"
+							+ " PRIMARY KEY (id))");
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		try {
-			statement = connection.createStatement();
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + "(`id` VARCHAR(5), " + " name VARCHAR(10), "
-					+ " lore TINYTEXT" + " location VARCHAR(30), " + " owner VARCHAR(36)," + " icon BLOB"
-					+ " PRIMARY KEY (id))");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+			
+		});
+		
 
 	}
 
