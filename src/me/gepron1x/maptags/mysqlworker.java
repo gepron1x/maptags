@@ -111,4 +111,7 @@ private Location fromString(String location) {
 	Location loc = new Location(Bukkit.getWorld(locs[0]),Double.parseDouble(locs[1]),Double.parseDouble(locs[2]),Double.parseDouble(locs[3]));
 	return loc;
 }
+public String getTable() {
+	return table;
+}
 }

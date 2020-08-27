@@ -44,5 +44,8 @@ public void saveConfigs() {
 			this.getLogger().info("Плагин отключен!");	
 			this.saveConfigs();
 		      }
+		public GlobalTagList getGloballist() {
+			return globallist;
+		}
 
 }
