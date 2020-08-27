@@ -18,12 +18,14 @@ import org.bukkit.inventory.ItemStack;
 import com.google.gson.Gson;
 
 public class mysqlworker {
+	private MapTagsPlugin plugin;
 	private String host, username, database, password, table;
 	private Connection connection;
 	private int port;
 
 	public mysqlworker(MapTagsPlugin plugin) {
 		Statement statement = null;
+		this.plugin = plugin;
 		this.host = plugin.getConfig().getString("host").split(":")[0];
 		this.database = plugin.getConfig().getString("database");
 		this.port = Integer.parseInt(plugin.getConfig().getString("host").split(":")[1]);
@@ -65,20 +67,29 @@ public class mysqlworker {
 		this.connection = c;
 	}
 
-	public void createMapTag(MapTag tag) {
-		try {
-			PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO maptags (id,name,location,owner,icon) VALUES (?,?,?,?,?)");
-			statement.setString(1, tag.getId());
-			statement.setString(2, tag.getName());
-			statement.setString(3, tag.getLocation());
-			statement.setString(4, tag.getOwner().toString());
-			statement.setString(5, tag.getIcon());
-			statement.executeUpdate();
-		} catch (SQLException e) {
-			// TODO ������������� ��������� ���� catch
-			e.printStackTrace();
-		}
+	public void createMapTag(final MapTag tag) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+			public void run() {
+				try {
+					PreparedStatement statement = connection
+							.prepareStatement("INSERT INTO maptags (id,name,location,owner,icon) VALUES (?,?,?,?,?)");
+					statement.setString(1, tag.getId());
+					statement.setString(2, tag.getName());
+					statement.setString(3, tag.getLocation());
+					statement.setString(4, tag.getOwner().toString());
+					statement.setString(5, tag.getIcon());
+					statement.executeUpdate();
+				} catch (SQLException e) {
+					// TODO ������������� ��������� ���� catch
+					e.printStackTrace();
+				}
+			}
+			
+		});
+	
+		
+	
 	}
 
 	public List<MapTag> getMapTags() {
