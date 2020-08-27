@@ -28,7 +28,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	}
 
 	private void build() {
-		Inventory inv = Bukkit.createInventory(null, 6 * 9, "���������� ����� #" + lastpage);
+		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
 		pages.clear();
 		for (ItemStack tag : maptags) {
 			inv.setItem(lastslot, tag);
@@ -38,7 +38,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 				inv.setItem(52, new ItemStack(Material.ARROW));
 				pages.add(inv);
 				lastpage++;
-				inv = Bukkit.createInventory(null, 6 * 9, "���������� ����� #" + lastpage);
+				inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки#" + lastpage);
 				lastslot = 0;
 			}
 		}
