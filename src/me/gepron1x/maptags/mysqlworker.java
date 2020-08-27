@@ -116,4 +116,41 @@ public class mysqlworker {
 	public String getTable() {
 		return table;
 	}
+ public void deleteTag(String id) {
+	 try {
+		PreparedStatement statement = connection.prepareStatement("DELETE FROM maptags WHERE id=?");
+		statement.setString(1, id);
+		statement.executeUpdate();
+		
+	} catch (SQLException e) {
+		// TODO Автоматически созданный блок catch
+		e.printStackTrace();
+	}
+ }
+	 public List<MapTag> getPlayerMapTags(UUID player) {
+			List<MapTag> tags = new ArrayList<MapTag>();
+			try {
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags where owner=?");
+				statement.setString(1, player.toString());
+				ResultSet result = statement.getResultSet();
+				Gson gson = new Gson();
+
+				while (result.next()) {
+					String id = result.getString("id");
+					String lore = result.getString("lore");
+					String name = result.getString("name");
+					Location loc = fromString(result.getString("location"));
+					UUID owner = UUID.fromString(result.getString("owner"));
+					ItemStack icon = gson.fromJson(result.getString("icon"), ItemStack.class);
+					tags.add(new MapTag(id, name, lore, owner, loc, icon));
+				}
+			} catch (SQLException e) {
+				// TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ catch
+				e.printStackTrace();
+			}
+
+			return tags;
+		}
+	 
+ 
 }
