@@ -33,6 +33,10 @@ public class mapTagCmd implements CommandExecutor {
 			for (MapTag tag : main.getGlobalList()) {
 				sender.sendMessage(tag.getName() + " " + tag.getId());
 			}
+		case "remove":
+			for(MapTag tag : main.getGlobalList()) {
+				if(tag.getId().equalsIgnoreCase(args[1])) main.getGlobalList().remove(tag);
+			}
 		}
 		return true;
 	}

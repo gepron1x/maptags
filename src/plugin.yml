@@ -1,9 +1,0 @@
-name: MapTags
-main: me.gepron1x.maptags.MapTagsPlugin
-description: 228
-version: 1.3.37
-authors: [NukerFall, gepron1x]
-api-version: 1.13
-commands:
-   maptag:
-      description: cringe
