@@ -148,6 +148,7 @@ public List<MapTag>	getPlayerTags(UUID player) {
 public String getTable() {
 	return table;
 }
+
 	
 }
 
