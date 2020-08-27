@@ -64,7 +64,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	}
 
 	public int getLastPage() {
-		return page;
+		return pages.size();
 	}
 
 	public void next() {
