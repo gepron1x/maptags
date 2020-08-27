@@ -28,3 +28,6 @@ hs_err_pid*
 .classpath
 .settings/org.eclipse.jdt.ui.prefs
 /target/
+target/classes/config.yml
+target/classes/plugin.yml
+target/classes/tags.yml
