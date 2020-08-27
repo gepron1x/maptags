@@ -1,9 +1,0 @@
-name: MapTagsPlugin
-main: me.gepron1x.maptags.MapTagsPlugin
-description: perfect
-version: 1.13.7
-commands:
-  guestmode: 
-      description: epta
-      usage: /<command>
-      permission: maptags.all
