@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 
 public class GlobalTagList {
 
-	@SuppressWarnings("unused")
 	private List<MapTag> maptags = new ArrayList<MapTag>();
+	@SuppressWarnings("unused")
 	private MapTagsPlugin main = MapTagsPlugin.getInstance();
 
 	public void addTag(String id, String name, String lore, Player p) {
