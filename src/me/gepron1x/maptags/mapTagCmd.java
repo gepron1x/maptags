@@ -15,16 +15,21 @@ public class mapTagCmd implements CommandExecutor {
 		case "create":
 			if (sender instanceof Player) {
 				Player p = (Player) sender;
-				main.getGloballist().addTag(args[1], args[2], args[3], p);
+				main.addTag(args[1], args[2], args[3], p);
 				return true;
 			}
 			break;
 		case "list":
 			if (sender instanceof Player) {
 				Player p = (Player) sender;
-				GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getGloballist().getList());
+				GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getGlobalList());
 				p.openInventory(gui.getInventory());
 				return true;
+			}
+			break;
+		case "debug":
+			for (MapTag tag : main.getGlobalList()) {
+				sender.sendMessage(tag.getName() + " " + tag.getId());
 			}
 		}
 		return true;

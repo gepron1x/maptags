@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import com.google.gson.Gson;
@@ -21,7 +22,13 @@ public class MapTag {
 	public MapTag(String id, String name, String lore, UUID owner, Location loc, ItemStack icon) {
 		this.id = id;
 		this.name = name;
-		this.lore = Arrays.asList(lore.split(";"));
+		if (lore.split(";").length != 1) {
+			this.lore = Arrays.asList(lore.split(";"));
+		} else {
+			List<String> to = new ArrayList<String>();
+			to.add(lore);
+			this.lore = to;
+		}
 		this.icon = icon;
 		this.owner = owner;
 		this.location = loc;
@@ -35,12 +42,9 @@ public class MapTag {
 		this.location = location;
 	}
 
-	public void setLore(String lore) {
-		this.lore = Arrays.asList(lore.split(";"));
-	}
-
 	public ItemStack toItemStack() {
-		ItemStack result = this.icon;
+		// ItemStack result = this.icon;
+		ItemStack result = new ItemStack(Material.DIAMOND);
 		ItemMeta meta = result.getItemMeta();
 		meta.setDisplayName(name);
 		lore.add("Enter text: " + location.getWorld().toString());

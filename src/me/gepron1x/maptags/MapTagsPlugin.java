@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
 import com.google.common.base.Charsets;
@@ -16,7 +19,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	private static MapTagsPlugin instance;
 	private File customConfig = new File(getDataFolder(), "tags.yml");
 	private FileConfiguration mapTags;
-	private GlobalTagList globallist;
+	private List<MapTag> maptags = new ArrayList<MapTag>();
 
 	public void onEnable() {
 		instance = this;
@@ -32,10 +35,6 @@ public class MapTagsPlugin extends JavaPlugin {
 		saveCustomConfig();
 		send("&cПлагин выключен.");
 		this.saveConfig();
-	}
-
-	public GlobalTagList getGloballist() {
-		return globallist;
 	}
 
 	public void reloadCustomConfig() {
@@ -56,6 +55,10 @@ public class MapTagsPlugin extends JavaPlugin {
 			getLogger().log(Level.SEVERE, "Could not save config to " + customConfig, ex);
 		}
 	}
+	
+	public void addTag(String id, String name, String lore, Player p) {
+		maptags.add(new MapTag(id, name, lore, p.getUniqueId(), p.getLocation(), p.getInventory().getItemInMainHand()));
+	}
 
 	public void saveCustomDefaultConfig() {
 		if (!customConfig.exists()) {
@@ -69,5 +72,9 @@ public class MapTagsPlugin extends JavaPlugin {
 
 	public static MapTagsPlugin getInstance() {
 		return instance;
+	}
+
+	public List<MapTag> getGlobalList() {
+		return maptags;
 	}
 }
