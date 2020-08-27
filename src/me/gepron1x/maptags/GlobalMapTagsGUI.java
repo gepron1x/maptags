@@ -2,7 +2,6 @@ package me.gepron1x.maptags;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -15,7 +14,6 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	private int lastpage = 1;
 	private int page = 0;
 	private int lastslot = 0;
-
 	private Inventory openedPage;
 
 	public GlobalMapTagsGUI(List<ItemStack> items) {
@@ -43,12 +41,10 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 				inv = Bukkit.createInventory(null, 6 * 9, "���������� ����� #" + lastpage);
 				lastslot = 0;
 			}
-
 		}
 		inv.setItem(46, new ItemStack(Material.ARROW));
 		inv.setItem(52, new ItemStack(Material.ARROW));
 		pages.add(inv);
-
 	}
 
 	public void setPage(int page) {

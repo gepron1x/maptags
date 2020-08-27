@@ -1,16 +1,13 @@
 package me.gepron1x.maptags;
 
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import com.google.gson.Gson;
 
 public class MapTag {
@@ -45,20 +42,18 @@ public class MapTag {
 		ItemStack result = this.icon;
 		ItemMeta meta = result.getItemMeta();
 		meta.setDisplayName(name);
-		lore.add("���: " + location.getWorld().toString());
+		lore.add("Enter text: " + location.getWorld().toString());
 		int x = (int) location.getX();
 		int y = (int) location.getY();
 		int z = (int) location.getZ();
 		lore.add(x + " " + y + " " + z);
-		lore.add("��������: " + Bukkit.getPlayer(owner).getDisplayName());
+		lore.add("Enter text: " + Bukkit.getPlayer(owner).getDisplayName());
 		meta.setLore(lore);
 		return icon;
-
 	}
 
 	public String getId() {
 		return id;
-
 	}
 
 	public String getName() {
@@ -71,7 +66,6 @@ public class MapTag {
 
 	public String getIcon() {
 		Gson gson = new Gson();
-
 		return gson.toJson(icon);
 	}
 

@@ -9,15 +9,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
-
 import com.google.gson.Gson;
 
 public class mysqlworker {
+
 	private MapTagsPlugin plugin;
 	private String host, username, database, password, table;
 	private Connection connection;
@@ -33,12 +32,10 @@ public class mysqlworker {
 		this.password = plugin.getConfig().getString("password");
 		this.table = "maptags";
 		try {
-
 			synchronized (this) {
 				if (connection != null && !connection.isClosed()) {
 					return;
 				}
-
 				Class.forName("com.mysql.jdbc.Driver");
 				setConnection(
 						DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database,
@@ -57,7 +54,6 @@ public class mysqlworker {
 					+ " lore TINYTEXT" + " location VARCHAR(30), " + " owner VARCHAR(36)," + " icon BLOB"
 					+ " PRIMARY KEY (id))");
 		} catch (SQLException e) {
-			// TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ catch
 			e.printStackTrace();
 		}
 
@@ -81,15 +77,11 @@ public class mysqlworker {
 					statement.setString(5, tag.getIcon());
 					statement.executeUpdate();
 				} catch (SQLException e) {
-					// TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ catch
 					e.printStackTrace();
 				}
 			}
-			
+
 		});
-	
-		
-	
 	}
 
 	public List<MapTag> getMapTags() {
@@ -98,11 +90,9 @@ public class mysqlworker {
 			PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags");
 			ResultSet result = statement.getResultSet();
 			Gson gson = new Gson();
-
 			while (result.next()) {
 				String id = result.getString("id");
 				String lore = result.getString("lore");
-
 				String name = result.getString("name");
 				Location loc = fromString(result.getString("location"));
 				UUID owner = UUID.fromString(result.getString("owner"));
@@ -110,10 +100,8 @@ public class mysqlworker {
 				tags.add(new MapTag(id, name, lore, owner, loc, icon));
 			}
 		} catch (SQLException e) {
-			// TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ catch
 			e.printStackTrace();
 		}
-
 		return tags;
 	}
 
@@ -127,41 +115,38 @@ public class mysqlworker {
 	public String getTable() {
 		return table;
 	}
- public void deleteTag(String id) {
-	 try {
-		PreparedStatement statement = connection.prepareStatement("DELETE FROM maptags WHERE id=?");
-		statement.setString(1, id);
-		statement.executeUpdate();
-		
-	} catch (SQLException e) {
-		// TODO Автоматически созданный блок catch
-		e.printStackTrace();
-	}
- }
-	 public List<MapTag> getPlayerMapTags(UUID player) {
-			List<MapTag> tags = new ArrayList<MapTag>();
-			try {
-				PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags where owner=?");
-				statement.setString(1, player.toString());
-				ResultSet result = statement.getResultSet();
-				Gson gson = new Gson();
 
-				while (result.next()) {
-					String id = result.getString("id");
-					String lore = result.getString("lore");
-					String name = result.getString("name");
-					Location loc = fromString(result.getString("location"));
-					UUID owner = UUID.fromString(result.getString("owner"));
-					ItemStack icon = gson.fromJson(result.getString("icon"), ItemStack.class);
-					tags.add(new MapTag(id, name, lore, owner, loc, icon));
-				}
-			} catch (SQLException e) {
-				// TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ catch
-				e.printStackTrace();
-			}
+	public void deleteTag(String id) {
+		try {
+			PreparedStatement statement = connection.prepareStatement("DELETE FROM maptags WHERE id=?");
+			statement.setString(1, id);
+			statement.executeUpdate();
 
-			return tags;
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-	 
- 
+	}
+
+	public List<MapTag> getPlayerMapTags(UUID player) {
+		List<MapTag> tags = new ArrayList<MapTag>();
+		try {
+			PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags where owner=?");
+			statement.setString(1, player.toString());
+			ResultSet result = statement.getResultSet();
+			Gson gson = new Gson();
+			while (result.next()) {
+				String id = result.getString("id");
+				String lore = result.getString("lore");
+				String name = result.getString("name");
+				Location loc = fromString(result.getString("location"));
+				UUID owner = UUID.fromString(result.getString("owner"));
+				ItemStack icon = gson.fromJson(result.getString("icon"), ItemStack.class);
+				tags.add(new MapTag(id, name, lore, owner, loc, icon));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tags;
+	}
+
 }

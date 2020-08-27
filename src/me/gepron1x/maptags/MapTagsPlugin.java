@@ -1,14 +1,13 @@
 package me.gepron1x.maptags;
 
 import java.io.File;
-
 import java.io.IOException;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MapTagsPlugin extends JavaPlugin {
+	
 	File MapTagsStorage;
 	public FileConfiguration maptags;
 	private GlobalTagList globallist;
