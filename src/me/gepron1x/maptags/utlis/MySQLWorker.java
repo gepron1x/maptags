@@ -15,11 +15,10 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import com.google.gson.Gson;
 import me.gepron1x.maptags.MapTagsPlugin;
-import me.gepron1x.maptags.utlis.MapTag;
 
 public class MySQLWorker {
 
-	private MapTagsPlugin plugin;
+	private MapTagsPlugin plugin = MapTagsPlugin.getInstance();
 	private String host, username, database, password, table;
 	private Connection connection;
 	private int port;
