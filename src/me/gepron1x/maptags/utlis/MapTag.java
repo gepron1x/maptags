@@ -43,16 +43,18 @@ public class MapTag {
 
 	public ItemStack toItemStack() {
 		// ItemStack result = this.icon;
-		ItemStack result = new ItemStack(this.icon.getType(), this.icon.getAmount());
+		List<String> loredump = new ArrayList<String>();
+		loredump.addAll(lore);
+		ItemStack result = new ItemStack(this.icon.getType(), 1);
 		ItemMeta meta = result.getItemMeta();
 		meta.setDisplayName(name);
-		lore.add("Enter text: " + location.getWorld().getName());
+		loredump.add(Colors.paint("&fМир: " + location.getWorld().getName()));
 		int x = (int) location.getX();
 		int y = (int) location.getY();
 		int z = (int) location.getZ();
-		lore.add(x + " " + y + " " + z);
-		lore.add("Enter text: " + Bukkit.getPlayer(owner).getDisplayName());
-		meta.setLore(lore);
+		loredump.add(Colors.paint("&f"+x + " " + y + " " + z));
+		loredump.add(Colors.paint("&fВладелец: " + Bukkit.getPlayer(owner).getDisplayName()));
+		meta.setLore(loredump);
 		result.setItemMeta(meta);
 		return result;
 	}
