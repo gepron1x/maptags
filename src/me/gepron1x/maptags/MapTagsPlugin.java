@@ -36,7 +36,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		mapTags = YamlConfiguration.loadConfiguration(customConfig);
 		saveCustomDefaultConfig();
 		send("&aPlugin enabled!");
-	
+	//s
 
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 	}
