@@ -28,4 +28,3 @@ hs_err_pid*
 .classpath
 .settings/org.eclipse.jdt.ui.prefs
 /target/
-pom.xml

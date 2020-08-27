@@ -15,7 +15,6 @@ public class mapTagCmd implements CommandExecutor {
 		case "create":
 			if (sender instanceof Player) {
 				Player p = (Player) sender;
-				
 				main.addTag(args[1], args[2], args[3], p);
 				return true;
 			}
@@ -25,7 +24,6 @@ public class mapTagCmd implements CommandExecutor {
 				Player p = (Player) sender;
 				GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getGlobalList());
 				p.openInventory(gui.getInventory());
-				
 				return true;
 			}
 			break;

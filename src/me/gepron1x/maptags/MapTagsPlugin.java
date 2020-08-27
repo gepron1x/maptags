@@ -29,14 +29,14 @@ public class MapTagsPlugin extends JavaPlugin {
 		getCommand("maptag").setExecutor(new mapTagCmd());
 		mapTags = YamlConfiguration.loadConfiguration(customConfig);
 		saveCustomDefaultConfig();
-		send("&aПлагин включен, вроде бы");
+		send("&aPlugin enabled!");
 		this.saveDefaultConfig();
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 	}
 
 	public void onDisable() {
 		saveCustomConfig();
-		send("&cПлагин выключен.");
+		send("&cPlugin deasbled.");
 		this.saveConfig();
 	}
 

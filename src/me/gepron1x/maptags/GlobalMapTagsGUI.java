@@ -3,13 +3,12 @@ package me.gepron1x.maptags;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import net.md_5.bungee.api.ChatColor;
 
 public class GlobalMapTagsGUI implements InventoryHolder {
 
@@ -26,7 +25,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 		this.pages = new ArrayList<Inventory>();
 		this.nopage = new ItemStack(Material.BARRIER);
 		ItemMeta meta = nopage.getItemMeta();
-		meta.setDisplayName(ChatColor.RED + "Р‘РѕР»СЊС€Рµ РЅРµС‚Сѓ СЃС‚СЂР°РЅРёС†!");
+		meta.setDisplayName(ChatColor.RED + "Больше нету страниц!");
 		nopage.setItemMeta(meta);
 		build();
 	}
@@ -37,7 +36,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	}
 
 	private void build() {
-		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РјРµС‚РєРё #" + lastpage);
+		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
 		pages.clear();
 		for (MapTag tag : maptags) {
 			inv.setItem(lastslot, tag.toItemStack());
@@ -47,7 +46,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 				inv.setItem(52, new ItemStack(Material.ARROW));
 				pages.add(inv);
 				lastpage++;
-				inv = Bukkit.createInventory(this, 6 * 9, "Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РјРµС‚РєРё #" + lastpage);
+				inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
 				lastslot = 0;
 			}
 		}
