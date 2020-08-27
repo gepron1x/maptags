@@ -59,9 +59,11 @@ public class MySQLWorker {
 				}
 				try {
 					Statement statement = connection.createStatement();
-					statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + "(`id` VARCHAR(5), " + " name VARCHAR(10), "
-							+ " lore TINYTEXT" + " location VARCHAR(30), " + " owner VARCHAR(36)," + " icon BLOB"
-							+ " PRIMARY KEY (id))");
+					statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + 
+					"(`id` VARCHAR(5), "
+					+ " name VARCHAR(10), "
+					+ " lore TINYTEXT," + " location VARCHAR(30), " + " owner VARCHAR(36)," + " icon BLOB,"
+					+ " PRIMARY KEY (id))");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -97,23 +99,34 @@ public class MySQLWorker {
 
 	public List<MapTag> getMapTags() {
 		List<MapTag> tags = new ArrayList<MapTag>();
-		try {
-			PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags");
-			ResultSet result = statement.getResultSet();
-			Gson gson = new Gson();
-			while (result.next()) {
-				String id = result.getString("id");
-				String lore = result.getString("lore");
-				String name = result.getString("name");
-				Location loc = fromString(result.getString("location"));
-				UUID owner = UUID.fromString(result.getString("owner"));
-				ItemStack icon = gson.fromJson(result.getString("icon"), ItemStack.class);
-				tags.add(new MapTag(id, name, lore, owner, loc, icon));
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Автоматически созданная заглушка метода
+			
+				try {
+					PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags");
+					ResultSet result = statement.getResultSet();
+					Gson gson = new Gson();
+					while (result.next()) {
+						String id = result.getString("id");
+						String lore = result.getString("lore");
+						String name = result.getString("name");
+						Location loc = fromString(result.getString("location"));
+						UUID owner = UUID.fromString(result.getString("owner"));
+						ItemStack icon = gson.fromJson(result.getString("icon"), ItemStack.class);
+						tags.add(new MapTag(id, name, lore, owner, loc, icon));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+			
+		});
 		return tags;
+		
 	}
 
 	private Location fromString(String location) {
@@ -127,36 +140,53 @@ public class MySQLWorker {
 		return table;
 	}
 
-	public void deleteTag(String id) {
-		try {
-			PreparedStatement statement = connection.prepareStatement("DELETE FROM maptags WHERE id=?");
-			statement.setString(1, id);
-			statement.executeUpdate();
+	public void deleteTag(final String id) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+			@Override
+			public void run() {
+				try {
+					PreparedStatement statement = connection.prepareStatement("DELETE FROM maptags WHERE id=?");
+					statement.setString(1, id);
+					statement.executeUpdate();
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			
+		});
+		
 	}
 
 	public List<MapTag> getPlayerMapTags(UUID player) {
 		List<MapTag> tags = new ArrayList<MapTag>();
-		try {
-			PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags where owner=?");
-			statement.setString(1, player.toString());
-			ResultSet result = statement.getResultSet();
-			Gson gson = new Gson();
-			while (result.next()) {
-				String id = result.getString("id");
-				String lore = result.getString("lore");
-				String name = result.getString("name");
-				Location loc = fromString(result.getString("location"));
-				UUID owner = UUID.fromString(result.getString("owner"));
-				ItemStack icon = gson.fromJson(result.getString("icon"), ItemStack.class);
-				tags.add(new MapTag(id, name, lore, owner, loc, icon));
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags where owner=?");
+					statement.setString(1, player.toString());
+					ResultSet result = statement.getResultSet();
+					Gson gson = new Gson();
+					while (result.next()) {
+						String id = result.getString("id");
+						String lore = result.getString("lore");
+						String name = result.getString("name");
+						Location loc = fromString(result.getString("location"));
+						UUID owner = UUID.fromString(result.getString("owner"));
+						ItemStack icon = gson.fromJson(result.getString("icon"), ItemStack.class);
+						tags.add(new MapTag(id, name, lore, owner, loc, icon));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+			
+		});
+	
 		return tags;
 	}
 
