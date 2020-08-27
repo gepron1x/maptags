@@ -8,18 +8,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
 
 public class InventoryListener implements Listener {
 
 	GlobalMapTagsGUI gui;
-	MapTagsPlugin main;
-
-	public InventoryListener() {
-		this.main = MapTagsPlugin.getInstance();
-	}
+	MapTagsPlugin main = MapTagsPlugin.getInstance();
 
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
@@ -41,13 +36,10 @@ public class InventoryListener implements Listener {
 					@Override
 					public void run() {
 						inv.setItem(46, new ItemStack(Material.ARROW));
-
 					}
-
 				}, 20);
 				return;
 			}
-
 			gui.previous();
 			p.closeInventory();
 			p.openInventory(gui.getInventory());

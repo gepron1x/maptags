@@ -14,9 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-
 import com.google.common.base.Charsets;
-
 import me.gepron1x.maptags.commands.CommandManager;
 import me.gepron1x.maptags.events.InventoryListener;
 import me.gepron1x.maptags.utlis.MapTag;
