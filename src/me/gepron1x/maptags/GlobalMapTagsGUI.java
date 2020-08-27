@@ -9,6 +9,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class GlobalMapTagsGUI implements InventoryHolder {
+
 	private List<Inventory> pages;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
 	private int lastpage = 1;

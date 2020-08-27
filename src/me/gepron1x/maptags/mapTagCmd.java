@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class mapTagCmd implements CommandExecutor {
+
 	public MapTagsPlugin main = MapTagsPlugin.getInstance();
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

@@ -65,7 +65,6 @@ public class mysqlworker {
 
 	public void createMapTag(final MapTag tag) {
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
 			public void run() {
 				try {
 					PreparedStatement statement = connection
@@ -80,7 +79,6 @@ public class mysqlworker {
 					e.printStackTrace();
 				}
 			}
-
 		});
 	}
 

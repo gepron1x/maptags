@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.google.gson.Gson;
 
 public class MapTag {
+
 	private String id, name;
 	private List<String> lore = new ArrayList<String>();
 	private UUID owner;

@@ -6,9 +6,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class InventoryListener implements Listener {
-	
+
 	GlobalMapTagsGUI gui;
-	
+
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		if (e.getInventory().getHolder() instanceof GlobalMapTagsGUI) {
