@@ -1,5 +1,7 @@
 package me.gepron1x.maptags;
 
+import java.util.List;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,6 +27,11 @@ public class mapTagCmd implements CommandExecutor {
 				GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getGloballist().getList());
 				p.openInventory(gui.getInventory());
 				return true;
+			}
+		case "textlist":
+			List<MapTag> maptags = main.getGloballist().getList();
+			for(MapTag tag : maptags) {
+				sender.sendMessage(tag.getName());
 			}
 		}
 		return true;
