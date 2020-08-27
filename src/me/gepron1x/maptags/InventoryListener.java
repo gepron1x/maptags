@@ -13,12 +13,14 @@ public class InventoryListener implements Listener {
 
 	GlobalMapTagsGUI gui;
 	MapTagsPlugin main;
+
 	public InventoryListener() {
 		this.main = MapTagsPlugin.getInstance();
 	}
+
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
-		
+
 		if (e.getInventory().getHolder() instanceof GlobalMapTagsGUI) {
 			gui = (GlobalMapTagsGUI) e.getInventory().getHolder();
 		} else {
@@ -28,40 +30,40 @@ public class InventoryListener implements Listener {
 		e.setCancelled(true);
 		switch (e.getSlot()) {
 		case 46:
-	       if(gui.getPage() == 0) {
-	    	   final Inventory inv = e.getClickedInventory();
-	    	   e.getClickedInventory().setItem(46, gui.getNoPage());
-	    	   Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+			if (gui.getPage() == 0) {
+				final Inventory inv = e.getClickedInventory();
+				e.getClickedInventory().setItem(46, gui.getNoPage());
+				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
 
-				@Override
-				public void run() {
-				   inv.setItem(46, new ItemStack(Material.ARROW));
-					
-				}
-	    		   
-	    	   }, 20);
-	    	   return;
-	       }
-	       
+					@Override
+					public void run() {
+						inv.setItem(46, new ItemStack(Material.ARROW));
+
+					}
+
+				}, 20);
+				return;
+			}
+
 			gui.previous();
 			p.closeInventory();
 			p.openInventory(gui.getInventory());
 			break;
 		case 52:
-			
-			if(gui.getLastPage() == gui.getPage()) {
+
+			if (gui.getLastPage() == gui.getPage()) {
 				final Inventory inv = e.getClickedInventory();
-				
+
 				e.getClickedInventory().setItem(52, gui.getNoPage());
 				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
 
 					@Override
 					public void run() {
-					   inv.setItem(52, new ItemStack(Material.ARROW));
-						
+						inv.setItem(52, new ItemStack(Material.ARROW));
+
 					}
-		    		   
-		    	   }, 20);
+
+				}, 20);
 				return;
 			}
 			gui.next();
