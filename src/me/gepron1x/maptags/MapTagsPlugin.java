@@ -23,7 +23,6 @@ public class MapTagsPlugin extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
-		globallist = new GlobalTagList();
 		getCommand("maptag").setExecutor(new mapTagCmd());
 		mapTags = YamlConfiguration.loadConfiguration(customConfig);
 		saveCustomDefaultConfig();

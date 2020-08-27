@@ -39,7 +39,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 				inv.setItem(52, new ItemStack(Material.ARROW));
 				pages.add(inv);
 				lastpage++;
-				inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки#" + lastpage);
+				inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
 				lastslot = 0;
 			}
 		}

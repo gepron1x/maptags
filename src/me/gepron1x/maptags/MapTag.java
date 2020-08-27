@@ -46,7 +46,7 @@ public class MapTag {
 		ItemStack result = new ItemStack(this.icon.getType(), this.icon.getAmount());
 		ItemMeta meta = result.getItemMeta();
 		meta.setDisplayName(name);
-		lore.add("Enter text: " + location.getWorld().toString());
+		lore.add("Enter text: " + location.getWorld().getName());
 		int x = (int) location.getX();
 		int y = (int) location.getY();
 		int z = (int) location.getZ();
