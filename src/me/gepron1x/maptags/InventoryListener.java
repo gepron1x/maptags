@@ -8,9 +8,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 public class InventoryListener implements Listener {
 
 	GlobalMapTagsGUI gui;
-
+	
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
+		
 		if (e.getInventory().getHolder() instanceof GlobalMapTagsGUI) {
 			gui = (GlobalMapTagsGUI) e.getInventory().getHolder();
 		} else {
@@ -20,12 +21,24 @@ public class InventoryListener implements Listener {
 		e.setCancelled(true);
 		switch (e.getSlot()) {
 		case 46:
+	       if(gui.getPage() == 0) {
+	    	   e.getClickedInventory().setItem(46, gui.getNoPage());
+	    	   return;
+	       }
+	       
 			gui.previous();
-			p.updateInventory();
+			p.closeInventory();
+			p.openInventory(gui.getInventory());
 			break;
 		case 52:
+			
+			if(gui.getLastPage() == gui.getPage()) {
+				e.getClickedInventory().setItem(52, gui.getNoPage());
+				return;
+			}
 			gui.next();
-			p.updateInventory();
+			p.closeInventory();
+			p.openInventory(gui.getInventory());
 			break;
 		}
 	}

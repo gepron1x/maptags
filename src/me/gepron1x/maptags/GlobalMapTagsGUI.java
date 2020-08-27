@@ -7,6 +7,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class GlobalMapTagsGUI implements InventoryHolder {
 
@@ -16,10 +19,15 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	private int page = 0;
 	private int lastslot = 0;
 	private Inventory openedPage;
+	private ItemStack nopage;
 
 	public GlobalMapTagsGUI(List<MapTag> items) {
 		this.maptags = items;
 		this.pages = new ArrayList<Inventory>();
+		this.nopage = new ItemStack(Material.BARRIER);
+		ItemMeta meta = nopage.getItemMeta();
+		meta.setDisplayName(ChatColor.RED + "Больше нету страниц!");
+		nopage.setItemMeta(meta);
 		build();
 	}
 
@@ -52,11 +60,23 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 		this.page = page;
 	}
 
+	public int getPage() {
+		return page;
+	}
+
+	public int getLastPage() {
+		return page;
+	}
+
 	public void next() {
 		page++;
 	}
 
 	public void previous() {
 		page--;
+	}
+
+	public ItemStack getNoPage() {
+		return nopage;
 	}
 }

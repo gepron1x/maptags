@@ -10,8 +10,11 @@ import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+
 import com.google.common.base.Charsets;
 
 public class MapTagsPlugin extends JavaPlugin {
@@ -57,7 +60,13 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 	
 	public void addTag(String id, String name, String lore, Player p) {
-		maptags.add(new MapTag(id, name, lore, p.getUniqueId(), p.getLocation(), p.getInventory().getItemInMainHand()));
+		ItemStack e;
+		if(p.getInventory().getItemInMainHand() != null) {
+			e = p.getInventory().getItemInMainHand();
+		} else {
+		e = new ItemStack(Material.BEDROCK);
+		}
+		maptags.add(new MapTag(id, name, lore, p.getUniqueId(), p.getLocation(), e));
 	}
 
 	public void saveCustomDefaultConfig() {
