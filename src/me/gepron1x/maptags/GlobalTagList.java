@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GlobalTagList {
-private List<MapTag> maptags = new ArrayList<MapTag>();
-public GlobalTagList() {
-	
-}
+	@SuppressWarnings("unused")
+	private List<MapTag> maptags = new ArrayList<MapTag>();
+
+	public GlobalTagList() {
+
+	}
 }
