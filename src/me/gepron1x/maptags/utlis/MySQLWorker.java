@@ -1,4 +1,4 @@
-package me.gepron1x.maptags;
+package me.gepron1x.maptags.utlis;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,14 +15,16 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import com.google.gson.Gson;
 
-public class mysqlworker {
+import me.gepron1x.maptags.MapTagsPlugin;
+
+public class MySQLWorker {
 
 	private MapTagsPlugin plugin;
 	private String host, username, database, password, table;
 	private Connection connection;
 	private int port;
 
-	public mysqlworker(MapTagsPlugin plugin) {
+	public MySQLWorker(MapTagsPlugin plugin) {
 		Statement statement = null;
 		this.plugin = plugin;
 		this.host = plugin.getConfig().getString("host").split(":")[0];

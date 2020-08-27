@@ -1,4 +1,4 @@
-package me.gepron1x.maptags;
+package me.gepron1x.maptags.utlis;
 
 import java.util.ArrayList;
 import java.util.Arrays;

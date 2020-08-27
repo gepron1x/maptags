@@ -17,6 +17,10 @@ import org.bukkit.Material;
 
 import com.google.common.base.Charsets;
 
+import me.gepron1x.maptags.commands.CommandManager;
+import me.gepron1x.maptags.events.InventoryListener;
+import me.gepron1x.maptags.utlis.MapTag;
+
 public class MapTagsPlugin extends JavaPlugin {
 
 	private static MapTagsPlugin instance;
@@ -26,7 +30,7 @@ public class MapTagsPlugin extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
-		getCommand("maptag").setExecutor(new mapTagCmd());
+		getCommand("maptag").setExecutor(new CommandManager());
 		mapTags = YamlConfiguration.loadConfiguration(customConfig);
 		saveCustomDefaultConfig();
 		send("&aPlugin enabled!");

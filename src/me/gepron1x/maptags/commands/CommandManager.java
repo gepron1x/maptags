@@ -1,11 +1,15 @@
-package me.gepron1x.maptags;
+package me.gepron1x.maptags.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class mapTagCmd implements CommandExecutor {
+import me.gepron1x.maptags.MapTagsPlugin;
+import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
+import me.gepron1x.maptags.utlis.MapTag;
+
+public class CommandManager implements CommandExecutor {
 
 	public MapTagsPlugin main = MapTagsPlugin.getInstance();
 

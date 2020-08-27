@@ -1,4 +1,4 @@
-package me.gepron1x.maptags;
+package me.gepron1x.maptags.utlis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 		this.pages = new ArrayList<Inventory>();
 		this.nopage = new ItemStack(Material.BARRIER);
 		ItemMeta meta = nopage.getItemMeta();
-		meta.setDisplayName(ChatColor.RED + "Больше нету страниц!");
+		meta.setDisplayName(ChatColor.RED + "РЎР»РµРґСѓСЋС‰РµР№ СЃС‚СЂР°РЅРёС†С‹ РЅРµС‚!");
 		nopage.setItemMeta(meta);
 		build();
 	}
@@ -36,7 +36,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	}
 
 	private void build() {
-		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
+		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РјРµС‚РєРё #" + lastpage);
 		pages.clear();
 		for (MapTag tag : maptags) {
 			inv.setItem(lastslot, tag.toItemStack());
@@ -46,7 +46,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 				inv.setItem(52, new ItemStack(Material.ARROW));
 				pages.add(inv);
 				lastpage++;
-				inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
+				inv = Bukkit.createInventory(this, 6 * 9, "Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РјРµС‚РєРё #" + lastpage);
 				lastslot = 0;
 			}
 		}
