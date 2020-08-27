@@ -21,7 +21,6 @@
 			<id>sk89q-repo</id>
 			<url>https://maven.enginehub.org/repo/</url>
 		</repository>
-		
 	</repositories>
 	<dependencies>
 		<!--This adds the Spigot API artifact to the build -->
