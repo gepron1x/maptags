@@ -92,7 +92,6 @@ public List<MapTag> getMapTags() {
 		while(result.next()) {
 		 String id = result.getString("id");
 		 String lore = result.getString("lore");
-		 
 		 String name = result.getString("name");
 		 Location loc = fromString(result.getString("location"));
 		 UUID owner = UUID.fromString(result.getString("owner"));
@@ -111,4 +110,42 @@ private Location fromString(String location) {
 	Location loc = new Location(Bukkit.getWorld(locs[0]),Double.parseDouble(locs[1]),Double.parseDouble(locs[2]),Double.parseDouble(locs[3]));
 	return loc;
 }
+public void deleteTag(String id) {
+	try {
+		PreparedStatement statement = connection.prepareStatement("DELETE FROM maptags WHERE id=?");
+		statement.setString(1, id);
+		statement.executeUpdate();
+	} catch (SQLException e) {
+		// TODO Автоматически созданный блок catch
+		e.printStackTrace();
+	} 
 }
+public List<MapTag>	getPlayerTags(UUID player) {
+	List<MapTag> result = new ArrayList<MapTag>();
+	Gson gson = new Gson();
+	PreparedStatement statement;
+	try {
+		statement = connection.prepareStatement("SELECT * FROM maptags WHERE owner=?");
+	
+	statement.setString(1, player.toString());
+	ResultSet resultset = statement.getResultSet();
+	
+	while(resultset.next()) {
+		String id =  resultset.getString("id");
+		 String lore = resultset.getString("lore");
+		 String name = resultset.getString("name");
+		 Location loc = fromString(resultset.getString("location"));
+		 UUID owner = UUID.fromString(resultset.getString("owner"));
+		 ItemStack icon = gson.fromJson(resultset.getString("icon"), ItemStack.class);
+		 result.add(new MapTag(id,name,lore,owner,loc,icon));
+	}
+	} catch (SQLException e) {
+		// TODO Автоматически созданный блок catch
+		e.printStackTrace();
+	}
+	return result;
+}
+	
+}
+
+
