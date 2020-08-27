@@ -10,13 +10,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class GlobalMapTagsGUI implements InventoryHolder {
 	private List<Inventory> pages;
-	private List<ItemStack> maptags = new ArrayList<ItemStack>();
+	private List<MapTag> maptags = new ArrayList<MapTag>();
 	private int lastpage = 1;
 	private int page = 0;
 	private int lastslot = 0;
 	private Inventory openedPage;
 
-	public GlobalMapTagsGUI(List<ItemStack> items) {
+	public GlobalMapTagsGUI(List<MapTag> items) {
 		this.maptags = items;
 		this.pages = new ArrayList<Inventory>();
 		build();
@@ -30,8 +30,8 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	private void build() {
 		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
 		pages.clear();
-		for (ItemStack tag : maptags) {
-			inv.setItem(lastslot, tag);
+		for (MapTag tag : maptags) {
+			inv.setItem(lastslot, tag.toItemStack());
 			lastslot++;
 			if (lastslot == 45) {
 				inv.setItem(46, new ItemStack(Material.ARROW));
