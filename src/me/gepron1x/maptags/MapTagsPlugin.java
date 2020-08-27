@@ -25,8 +25,10 @@ import me.gepron1x.maptags.utlis.MapTag;
 public class MapTagsPlugin extends JavaPlugin {
 	private MySQLWorker mySQL;
 	private static MapTagsPlugin instance;
-	private File customConfig = new File(getDataFolder(), "tags.yml");
+	private File tagsFile = new File(getDataFolder(), "tags.yml");
 	private FileConfiguration mapTags;
+	private File msgFile = new File(getDataFolder(), "messages.yml");
+	private FileConfiguration messages;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
 	private HashMap<UUID, MapTag> selectedTags = new HashMap<UUID, MapTag>();
 
@@ -35,20 +37,23 @@ public class MapTagsPlugin extends JavaPlugin {
 		this.saveDefaultConfig();
 		getCommand("maptag").setExecutor(new CommandManager());
 		mySQL = new MySQLWorker();
-		mapTags = YamlConfiguration.loadConfiguration(customConfig);
+		messages = YamlConfiguration.loadConfiguration(msgFile);
+		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		saveCustomDefaultConfig();
+		saveDefaultMessages();
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		send("&aPlugin enabled!");
 	}
 
 	public void onDisable() {
-		saveCustomConfig();
+		savetagsFile();
+		reloadMessages();
+		reloadConfig();
 		send("&cPlugin deasbled.");
-		this.saveConfig();
 	}
 
-	public void reloadCustomConfig() {
-		mapTags = YamlConfiguration.loadConfiguration(customConfig);
+	public void reloadtagsFile() {
+		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		final InputStream defConfigStream = getResource("tags.yml");
 		if (defConfigStream == null) {
 			return;
@@ -57,11 +62,11 @@ public class MapTagsPlugin extends JavaPlugin {
 				YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
 	}
 
-	public void saveCustomConfig() {
+	public void savetagsFile() {
 		try {
-			getConfig().save(customConfig);
+			getConfig().save(tagsFile);
 		} catch (IOException ex) {
-			getLogger().log(Level.SEVERE, "Could not save config to " + customConfig, ex);
+			getLogger().log(Level.SEVERE, "Could not save config to " + tagsFile, ex);
 		}
 	}
 
@@ -76,8 +81,32 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void saveCustomDefaultConfig() {
-		if (!customConfig.exists()) {
+		if (!tagsFile.exists()) {
 			saveResource("tags.yml", false);
+		}
+	}
+	
+	public void reloadMessages() {
+		messages = YamlConfiguration.loadConfiguration(msgFile);
+		final InputStream defConfigStream = getResource("messages.yml");
+		if (defConfigStream == null) {
+			return;
+		}
+		messages.setDefaults(
+				YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
+	}
+
+	public void saveMessages() {
+		try {
+			messages.save(msgFile);
+		} catch (IOException ex) {
+			getLogger().log(Level.SEVERE, "Could not save config to " + msgFile, ex);
+		}
+	}
+	
+	public void saveDefaultMessages() {
+		if (!msgFile.exists()) {
+			saveResource("messages.yml", false);
 		}
 	}
 
@@ -99,5 +128,9 @@ public class MapTagsPlugin extends JavaPlugin {
 
 	public HashMap<UUID, MapTag> getSelectedTags() {
 		return selectedTags;
+	}
+
+	public FileConfiguration getMessages() {
+		return messages;
 	}
 }
