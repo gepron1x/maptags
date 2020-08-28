@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +42,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		saveCustomDefaultConfig();
 		saveDefaultMessages();
+		
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		send("&aPlugin enabled!");
 	}
@@ -77,7 +79,17 @@ public class MapTagsPlugin extends JavaPlugin {
 		} else {
 			e = new ItemStack(Material.BEDROCK);
 		}
-		maptags.add(new MapTag(id, name, lore, p.getUniqueId(), p.getLocation(), e));
+		List<String> lorear = new ArrayList<String>();
+		if (lore.split(";").length != 1 ) {
+			lorear = Arrays.asList(lore.split(";"));
+		} else {
+			List<String> to = new ArrayList<String>();
+			to.add("test");
+			lorear = to;
+		}
+		MapTag tag = new MapTag(id, name,lorear, p.getUniqueId(), p.getLocation(), e);
+		maptags.add(tag);
+		mySQL.createMapTag(tag);
 	}
 
 	public void saveCustomDefaultConfig() {
@@ -133,4 +145,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	public FileConfiguration getMessages() {
 		return messages;
 	}
+public void loadTagsfromMySQL(List<MapTag> tags) {
+   this.maptags.addAll(tags);
+      }
 }

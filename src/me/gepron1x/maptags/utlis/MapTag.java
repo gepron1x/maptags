@@ -1,6 +1,7 @@
 package me.gepron1x.maptags.utlis;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -18,16 +19,10 @@ public class MapTag {
 	private Location location;
 	private ItemStack icon;
 
-	public MapTag(String id, String name, String lore, UUID owner, Location loc, ItemStack icon) {
+	public MapTag(String id, String name, List<String> lore, UUID owner, Location loc, ItemStack icon) {
 		this.id = id;
 		this.name = name;
-		if (lore.split(";").length != 1) {
-			this.lore = Arrays.asList(lore.split(";"));
-		} else {
-			List<String> to = new ArrayList<String>();
-			to.add(lore);
-			this.lore = to;
-		}
+		this.lore = lore;
 		this.icon = icon;
 		this.owner = owner;
 		this.location = loc;
@@ -71,14 +66,19 @@ public class MapTag {
 		return owner;
 	}
 
-	public String getIcon() {
+	public String getSerializedIcon() {
 		Gson gson = new Gson();
-		return gson.toJson(icon);
+		return gson.toJson(icon.serialize());
 	}
 
-	public String getLocation() {
-		String result = location.getWorld().toString() + "," + location.getX() + "," + location.getY() + ","
-				+ location.getZ();
-		return result;
+	public String getSerializedLocation() {
+		Gson gson = new Gson();
+		
+		return gson.toJson(location.serialize());
+	}
+	public String getLoreJson() {
+		Gson gson = new Gson();
+		return gson.toJson(lore);
+		
 	}
 }

@@ -1,9 +1,14 @@
 package me.gepron1x.maptags.commands;
 
+
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+
+
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
@@ -18,8 +23,13 @@ public class CommandManager implements CommandExecutor {
 			if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
 					throwHelp(sender);
-				} else if (args[0].equalsIgnoreCase("info")) {
+				}  else if (args[0].equalsIgnoreCase("info")) {
 					throwInfo(sender);
+				} else if(args[0].equalsIgnoreCase("debug")) {
+				 for(MapTag tag : main.getGlobalList()) {
+					 sender.sendMessage(tag.getId());
+				 }
+					
 				} else if (args[0].equalsIgnoreCase("unselect")) {
 					if (sender instanceof Player) {
 						// unselect
@@ -49,6 +59,7 @@ public class CommandManager implements CommandExecutor {
 					for (MapTag tag : main.getGlobalList()) {
 						if (tag.getId().equalsIgnoreCase(args[1])) {
 							main.getGlobalList().remove(tag);
+							main.getMySQL().deleteTag(args[1]);
 							break;
 						}
 					}
@@ -60,7 +71,10 @@ public class CommandManager implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("create")) {
 					if (sender instanceof Player) {
 						Player p = (Player) sender;
+					
+
 						main.addTag(args[1], args[2], args[3], p);
+
 						//send message created
 						return true;
 					} else {
