@@ -1,13 +1,9 @@
 package me.gepron1x.maptags.commands;
 
-
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-
 
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.Colors;
@@ -23,18 +19,18 @@ public class CommandManager implements CommandExecutor {
 			if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
 					throwHelp(sender);
-				}  else if (args[0].equalsIgnoreCase("info")) {
+				} else if (args[0].equalsIgnoreCase("info")) {
 					throwInfo(sender);
-				} else if(args[0].equalsIgnoreCase("debug")) {
-				 for(MapTag tag : main.getGlobalList()) {
-					 sender.sendMessage(tag.getId());
-				 }
-					
+				} else if (args[0].equalsIgnoreCase("debug")) {
+					for (MapTag tag : main.getGlobalList()) {
+						sender.sendMessage(tag.getId());
+					}
+
 				} else if (args[0].equalsIgnoreCase("unselect")) {
 					if (sender instanceof Player) {
 						// unselect
 					} else {
-						sender.sendMessage(Colors.paint(main.getConfig().getString("player-only")));
+						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
 					}
 				} else if (args[0].equalsIgnoreCase("list")) {
 					if (sender instanceof Player) {
@@ -43,7 +39,7 @@ public class CommandManager implements CommandExecutor {
 						p.openInventory(gui.getInventory());
 						return true;
 					} else {
-						sender.sendMessage(Colors.paint(main.getConfig().getString("player-only")));
+						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
 					}
 				} else {
 					sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
@@ -53,7 +49,7 @@ public class CommandManager implements CommandExecutor {
 					if (sender instanceof Player) {
 						// select tag for compass
 					} else {
-						sender.sendMessage(Colors.paint(main.getConfig().getString("player-only")));
+						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
 					}
 				} else if (args[0].equalsIgnoreCase("remove")) {
 					for (MapTag tag : main.getGlobalList()) {
@@ -63,7 +59,7 @@ public class CommandManager implements CommandExecutor {
 							break;
 						}
 					}
-					//send message removed
+					sender.sendMessage(Colors.paint(main.getMessages().getString("command.removed")));
 				} else {
 					sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
 				}
@@ -71,14 +67,13 @@ public class CommandManager implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("create")) {
 					if (sender instanceof Player) {
 						Player p = (Player) sender;
-					
 
 						main.addTag(args[1], args[2], args[3], p);
-
-						//send message created
+                        sender.sendMessage(Colors.paint(main.getMessages().getString("command.created")));
+						
 						return true;
 					} else {
-						sender.sendMessage(Colors.paint(main.getConfig().getString("player-only")));
+						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
 					}
 				} else {
 					sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
@@ -98,7 +93,7 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	private void throwInfo(CommandSender sender) {
-		// TODO Auto-generated method stub
+	    
 
 	}
 

@@ -2,7 +2,6 @@ package me.gepron1x.maptags.utlis;
 
 import java.util.ArrayList;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -47,7 +46,7 @@ public class MapTag {
 		int x = (int) location.getX();
 		int y = (int) location.getY();
 		int z = (int) location.getZ();
-		loredump.add(Colors.paint("&f"+x + " " + y + " " + z));
+		loredump.add(Colors.paint("&f" + x + " " + y + " " + z));
 		loredump.add(Colors.paint("&fВладелец: " + Bukkit.getPlayer(owner).getDisplayName()));
 		meta.setLore(loredump);
 		result.setItemMeta(meta);
@@ -73,12 +72,13 @@ public class MapTag {
 
 	public String getSerializedLocation() {
 		Gson gson = new Gson();
-		
+
 		return gson.toJson(location.serialize());
 	}
+
 	public String getLoreJson() {
 		Gson gson = new Gson();
 		return gson.toJson(lore);
-		
+
 	}
 }

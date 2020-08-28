@@ -42,7 +42,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		saveCustomDefaultConfig();
 		saveDefaultMessages();
-		
+
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		send("&aPlugin enabled!");
 	}
@@ -73,21 +73,18 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void addTag(String id, String name, String lore, Player p) {
-		ItemStack e;
-		if (p.getInventory().getItemInMainHand() != null) {
-			e = p.getInventory().getItemInMainHand();
-		} else {
+		ItemStack e = p.getInventory().getItemInMainHand();
+		if (e == null)
 			e = new ItemStack(Material.BEDROCK);
-		}
 		List<String> lorear = new ArrayList<String>();
-		if (lore.split(";").length != 1 ) {
+		if (lore.split(";").length != 1) {
 			lorear = Arrays.asList(lore.split(";"));
 		} else {
 			List<String> to = new ArrayList<String>();
 			to.add("test");
 			lorear = to;
 		}
-		MapTag tag = new MapTag(id, name,lorear, p.getUniqueId(), p.getLocation(), e);
+		MapTag tag = new MapTag(id, name, lorear, p.getUniqueId(), p.getLocation(), e);
 		maptags.add(tag);
 		mySQL.createMapTag(tag);
 	}
@@ -97,7 +94,7 @@ public class MapTagsPlugin extends JavaPlugin {
 			saveResource("tags.yml", false);
 		}
 	}
-	
+
 	public void reloadMessages() {
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		final InputStream defConfigStream = getResource("messages.yml");
@@ -115,7 +112,7 @@ public class MapTagsPlugin extends JavaPlugin {
 			getLogger().log(Level.SEVERE, "Could not save config to " + msgFile, ex);
 		}
 	}
-	
+
 	public void saveDefaultMessages() {
 		if (!msgFile.exists()) {
 			saveResource("messages.yml", false);
@@ -145,7 +142,8 @@ public class MapTagsPlugin extends JavaPlugin {
 	public FileConfiguration getMessages() {
 		return messages;
 	}
-public void loadTagsfromMySQL(List<MapTag> tags) {
-   this.maptags.addAll(tags);
-      }
+
+	public void loadTagsfromMySQL(List<MapTag> tags) {
+		this.maptags.addAll(tags);
+	}
 }

@@ -14,7 +14,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 
 	private List<Inventory> pages;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
-	private int lastpage = 1;
+	private int lastpage = 0;
 	private int page = 0;
 	private int lastslot = 0;
 	private Inventory openedPage;
@@ -36,7 +36,8 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	}
 
 	private void build() {
-		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
+		int i = lastpage+1;
+		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + i);
 		pages.clear();
 		for (MapTag tag : maptags) {
 			inv.setItem(lastslot, tag.toItemStack());
@@ -46,7 +47,8 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 				inv.setItem(52, new ItemStack(Material.ARROW));
 				pages.add(inv);
 				lastpage++;
-				inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + lastpage);
+				i = lastpage+1;
+				inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + i);
 				lastslot = 0;
 			}
 		}
@@ -64,7 +66,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	}
 
 	public int getLastPage() {
-		return pages.size();
+		return lastpage;
 	}
 
 	public void next() {

@@ -27,8 +27,8 @@ public class MySQLWorker {
 	private Connection connection;
 
 	public MySQLWorker() {
-	
-         plugin = MapTagsPlugin.getInstance();
+
+		plugin = MapTagsPlugin.getInstance();
 		this.host = plugin.getConfig().getString("mysql.host");
 		this.database = plugin.getConfig().getString("mysql.database");
 		this.username = plugin.getConfig().getString("mysql.username");
@@ -43,16 +43,14 @@ public class MySQLWorker {
 
 			@Override
 			public void run() {
-				
+
 				try {
 					synchronized (this) {
 						if (connection != null && !connection.isClosed()) {
 							return;
 						}
 						Class.forName("com.mysql.jdbc.Driver");
-						setConnection(
-								DriverManager.getConnection("jdbc:mysql://" + hst + "/" + db,
-										usr, psw));
+						setConnection(DriverManager.getConnection("jdbc:mysql://" + hst + "/" + db, usr, psw));
 
 						Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MYSQL CONNECTED");
 					}
@@ -63,20 +61,17 @@ public class MySQLWorker {
 				}
 				try {
 					Statement statement = connection.createStatement();
-					statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + 
-					"(`id` VARCHAR(10), "
-					+ " name VARCHAR(20), "
-					+ " lore TINYTEXT," + " location TINYTEXT, " + " owner VARCHAR(36)," + " icon BLOB,"
-					+ " PRIMARY KEY (id))");
-					
+					statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + "(`id` VARCHAR(10), "
+							+ " name VARCHAR(20), " + " lore TINYTEXT," + " location TINYTEXT, " + " owner VARCHAR(36),"
+							+ " icon BLOB," + " PRIMARY KEY (id))");
+
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 				plugin.loadTagsfromMySQL(getMapTags());
 			}
-			
+
 		});
-		
 
 	}
 
@@ -88,8 +83,8 @@ public class MySQLWorker {
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 			public void run() {
 				try {
-					PreparedStatement statement = connection
-							.prepareStatement("INSERT INTO maptags (id,name,lore,location,owner,icon) VALUES (?,?,?,?,?,?)");
+					PreparedStatement statement = connection.prepareStatement(
+							"INSERT INTO maptags (id,name,lore,location,owner,icon) VALUES (?,?,?,?,?,?)");
 					statement.setString(1, tag.getId());
 					statement.setString(2, tag.getName());
 					statement.setString(3, tag.getLoreJson());
@@ -106,48 +101,46 @@ public class MySQLWorker {
 
 	public List<MapTag> getMapTags() {
 		List<MapTag> tags = new ArrayList<MapTag>();
-		//Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-			
-			//@Override
-			//public void run() {
-				// TODO Автоматически созданная заглушка метода
-			
-				try {
-					Statement statement = connection.createStatement(
-		                    ResultSet.TYPE_FORWARD_ONLY,
-		                    ResultSet.CONCUR_READ_ONLY
-		            );
-					 
-					ResultSet result = statement.executeQuery("SELECT * FROM maptags");
-					final Gson gson = new GsonBuilder().create();
-					while (result.next()) {
-						String id = result.getString("id");
-						@SuppressWarnings("unchecked")
-						List<String> lore = gson.fromJson(result.getString("lore"), new ArrayList<String>().getClass());
-						String name = result.getString("name");
-						@SuppressWarnings("unchecked")
-						Location loc = Location.deserialize(gson.fromJson(result.getString("location"), new HashMap<String,Object>().getClass()));
-						UUID owner = UUID.fromString(result.getString("owner"));
-						@SuppressWarnings("unchecked")
-						Map<String, Object> map = gson.fromJson(result.getString("icon"), new HashMap<String,Object>().getClass());
-						ItemStack icon = ItemStack.deserialize(map);
-						tags.add(new MapTag(id, name, lore, owner, loc, icon));
-						
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			  
-			//}
-			
-		//});
-		for(MapTag tag : tags) {
+		// Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+		// @Override
+		// public void run() {
+		// TODO Автоматически созданная заглушка метода
+
+		try {
+			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+			ResultSet result = statement.executeQuery("SELECT * FROM maptags");
+			final Gson gson = new GsonBuilder().create();
+			while (result.next()) {
+				String id = result.getString("id");
+				@SuppressWarnings("unchecked")
+				List<String> lore = gson.fromJson(result.getString("lore"), new ArrayList<String>().getClass());
+				String name = result.getString("name");
+				@SuppressWarnings("unchecked")
+				Location loc = Location.deserialize(
+						gson.fromJson(result.getString("location"), new HashMap<String, Object>().getClass()));
+				UUID owner = UUID.fromString(result.getString("owner"));
+				@SuppressWarnings("unchecked")
+				Map<String, Object> map = gson.fromJson(result.getString("icon"),
+						new HashMap<String, Object>().getClass());
+				ItemStack icon = ItemStack.deserialize(map);
+				tags.add(new MapTag(id, name, lore, owner, loc, icon));
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		// }
+
+		// });
+		for (MapTag tag : tags) {
 			Bukkit.getConsoleSender().sendMessage(tag.getId());
 		}
 		return tags;
-		
-	}
 
+	}
 
 	public String getTable() {
 		return table;
@@ -166,44 +159,46 @@ public class MySQLWorker {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				
+
 			}
-			
+
 		});
-		
+
 	}
 
 	public List<MapTag> getPlayerMapTags(UUID player) {
 		List<MapTag> tags = new ArrayList<MapTag>();
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+		// Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					PreparedStatement statement = connection.prepareStatement("SELECT * FROM maptags where owner=?");
-					statement.setString(1, player.toString());
-					ResultSet result = statement.getResultSet();
-					Gson gson = new Gson();
-					while (result.next()) {
-						String id = result.getString("id");
-						@SuppressWarnings("unchecked")
-						List<String> lore = gson.fromJson(result.getString("lore"),new ArrayList<String>().getClass());
-						String name = result.getString("name");
-						@SuppressWarnings("unchecked")
-						Location loc = Location.deserialize(gson.fromJson(result.getString("location"), new HashMap<String,Object>().getClass()));
-						UUID owner = UUID.fromString(result.getString("owner"));
-						@SuppressWarnings("unchecked")
-						Map<String, Object> map = gson.fromJson(result.getString("icon"), new HashMap<String,Object>().getClass());
-						ItemStack icon = ItemStack.deserialize(map);
-						tags.add(new MapTag(id, name, lore, owner, loc, icon));
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+		// @Override
+		// public void run() {
+		try {
+			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ResultSet result = statement.executeQuery("SELECT * FROM maptags where owner=" + player.toString());
+
+			Gson gson = new Gson();
+			while (result.next()) {
+				String id = result.getString("id");
+				@SuppressWarnings("unchecked")
+				List<String> lore = gson.fromJson(result.getString("lore"), new ArrayList<String>().getClass());
+				String name = result.getString("name");
+				@SuppressWarnings("unchecked")
+				Location loc = Location.deserialize(
+						gson.fromJson(result.getString("location"), new HashMap<String, Object>().getClass()));
+				UUID owner = UUID.fromString(result.getString("owner"));
+				@SuppressWarnings("unchecked")
+				Map<String, Object> map = gson.fromJson(result.getString("icon"),
+						new HashMap<String, Object>().getClass());
+				ItemStack icon = ItemStack.deserialize(map);
+				tags.add(new MapTag(id, name, lore, owner, loc, icon));
 			}
-			
-		});
-	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		// }
+
+		// });
+
 		return tags;
 	}
 
