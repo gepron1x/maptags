@@ -59,7 +59,7 @@ public class CommandManager implements CommandExecutor {
 							break;
 						}
 					}
-					sender.sendMessage(Colors.paint(main.getMessages().getString("command.removed")));
+					//sender.sendMessage(Colors.paint(main.getMessages().getString("command.removed")));
 				} else {
 					sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
 				}
@@ -69,7 +69,7 @@ public class CommandManager implements CommandExecutor {
 						Player p = (Player) sender;
 
 						main.addTag(args[1], args[2], args[3], p);
-                        sender.sendMessage(Colors.paint(main.getMessages().getString("command.created")));
+                       // sender.sendMessage(Colors.paint(main.getMessages().getString("command.created")));
 						
 						return true;
 					} else {
