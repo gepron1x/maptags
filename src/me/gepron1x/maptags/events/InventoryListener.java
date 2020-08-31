@@ -8,8 +8,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
+import me.gepron1x.maptags.utlis.MapTag;
+import net.md_5.bungee.api.ChatColor;
 
 public class InventoryListener implements Listener {
 
@@ -66,8 +70,24 @@ public class InventoryListener implements Listener {
 			p.openInventory(gui.getInventory());
 			break;
 	   default:
-		   gui.getClickedTag(e.getCurrentItem());
-		   
+		   final ItemStack is = e.getCurrentItem();
+		   final int slot = e.getSlot();
+		   final Inventory inv = e.getClickedInventory();
+		   MapTag tag = gui.getClickedTag(is);
+		   main.getWaypoints().addWayPoint((Player) e.getWhoClicked(), tag);
+		   ItemStack selected = new ItemStack(Material.STRUCTURE_VOID);
+		   ItemMeta meta = selected.getItemMeta();
+		   meta.setDisplayName(ChatColor.AQUA+"Метка успешно выбрана!");
+		   selected.setItemMeta(meta);
+		   e.getClickedInventory().setItem(e.getSlot(),selected);
+		   Bukkit.getScheduler().runTaskLater(main, new Runnable() {
+
+			@Override
+			public void run() {
+				inv.setItem(slot, is);
+				
+			}}, 20);
+		   break;
 		
 		}
 	}

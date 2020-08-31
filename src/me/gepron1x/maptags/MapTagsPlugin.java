@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.base.Charsets;
 import me.gepron1x.maptags.commands.CommandManager;
 import me.gepron1x.maptags.events.InventoryListener;
+import me.gepron1x.maptags.events.WaypointsListener;
 import me.gepron1x.maptags.utlis.MapTag;
 
 public class MapTagsPlugin extends JavaPlugin {
@@ -28,6 +29,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	private static MapTagsPlugin instance;
 	private File tagsFile = new File(getDataFolder(), "tags.yml");
 	private FileConfiguration mapTags;
+	WaypointsListener waypoints;
 	private File msgFile = new File(getDataFolder(), "messages.yml");
 	private FileConfiguration messages;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
@@ -36,7 +38,8 @@ public class MapTagsPlugin extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		this.saveDefaultConfig();
-
+        waypoints = new WaypointsListener();
+        
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
@@ -44,6 +47,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		saveDefaultMessages();
 		getCommand("maptag").setExecutor(new CommandManager());
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+		getServer().getPluginManager().registerEvents(waypoints, this);
 		send("&aPlugin enabled!");
 	}
 
@@ -51,7 +55,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		savetagsFile();
 		reloadMessages();
 		reloadConfig();
-		send("&cPlugin deasbled.");
+		send("&cPlugin disabled.");
 	}
 
 	public void reloadtagsFile() {
@@ -146,4 +150,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	public void loadTagsfromMySQL(List<MapTag> tags) {
 		this.maptags.addAll(tags);
 	}
+ public WaypointsListener getWaypoints() {
+	 return this.waypoints;
+ }
 }

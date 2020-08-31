@@ -269,6 +269,25 @@ for(String perm : perms) {
 			
 		});
 	}
+public void removePermission(final UUID player,final String id) {
+	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+		@Override
+		public void run() {
+			try {
+			PreparedStatement statement = connection.prepareStatement("DELETE FROM permissions WHERE id=? AND user=?");
+			statement.setString(1, id);
+			statement.setString(2, player.toString());
+			statement.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+			
+		}
+		
+	});
+}
 
 
 }

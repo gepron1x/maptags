@@ -81,4 +81,7 @@ public class MapTag {
 		return gson.toJson(lore);
 
 	}
+public Location getLocation() {
+	return location;
+}
 }

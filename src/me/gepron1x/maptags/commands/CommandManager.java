@@ -102,13 +102,15 @@ public class CommandManager implements CommandExecutor {
 			} else if(args.length == 3)  {   
 				 if(args[0].equalsIgnoreCase("share")) {
 					if(sender instanceof Player) {
-						Player p = (Player) sender;
 						main.getMySQL().setPlayerPermission(Bukkit.getPlayer(args[1]).getUniqueId(),args[2]);
 						
 					}
-				 }
+				 } 
 				
 			
+			} else if(args[0].equalsIgnoreCase("unshare")) {
+				main.getMySQL().removePermission(Bukkit.getPlayer(args[1]).getUniqueId(), args[2]);
+				
 			}
 			else {
 				sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
