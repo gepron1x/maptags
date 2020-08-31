@@ -65,6 +65,10 @@ public class InventoryListener implements Listener {
 			p.closeInventory();
 			p.openInventory(gui.getInventory());
 			break;
+	   default:
+		   gui.getClickedTag(e.getCurrentItem());
+		   
+		
 		}
 	}
 

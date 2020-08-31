@@ -1,5 +1,9 @@
 package me.gepron1x.maptags.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,10 +26,11 @@ public class CommandManager implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase("info")) {
 					throwInfo(sender);
 				} else if (args[0].equalsIgnoreCase("debug")) {
-					for (MapTag tag : main.getGlobalList()) {
-						sender.sendMessage(tag.getId());
+					if(sender instanceof Player) {
+						Player p = (Player) sender;
+						  sender.sendMessage(main.getMySQL().getPlayerPermissions(p.getUniqueId()));
 					}
-
+                       
 				} else if (args[0].equalsIgnoreCase("unselect")) {
 					if (sender instanceof Player) {
 						// unselect
@@ -35,13 +40,24 @@ public class CommandManager implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase("list")) {
 					if (sender instanceof Player) {
 						Player p = (Player) sender;
-						GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getGlobalList());
+						GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getGlobalList(),"Глобальные метки #");
 						p.openInventory(gui.getInventory());
 						return true;
 					} else {
 						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
 					}
-				} else {
+				} else if (args[0].equalsIgnoreCase("locallist")) {
+					if (sender instanceof Player) {
+						Player p = (Player) sender;
+						GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getMySQL().getPlayerMapTags(p.getUniqueId()),"Локальные метки игрока "+p.getDisplayName()+" #");
+						p.openInventory(gui.getInventory());
+						return true;
+					} else {
+						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
+					}
+				}
+
+				else {
 					sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
 				}
 			} else if (args.length == 2) {
@@ -59,18 +75,23 @@ public class CommandManager implements CommandExecutor {
 							break;
 						}
 					}
-					//sender.sendMessage(Colors.paint(main.getMessages().getString("command.removed")));
-				} else {
+					// sender.sendMessage(Colors.paint(main.getMessages().getString("command.removed")));
+				} 
+				
+				
+				else {
 					sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
 				}
-			} else if (args.length == 4) {
+			} else if (args.length == 5) {
 				if (args[0].equalsIgnoreCase("create")) {
 					if (sender instanceof Player) {
 						Player p = (Player) sender;
+						boolean isLocal = false;
+						if (args[4].equalsIgnoreCase("local"))
+							isLocal = true;
+						main.addTag(args[1], args[2], args[3], p, isLocal);
+						// sender.sendMessage(Colors.paint(main.getMessages().getString("command.created")));
 
-						main.addTag(args[1], args[2], args[3], p);
-                       // sender.sendMessage(Colors.paint(main.getMessages().getString("command.created")));
-						
 						return true;
 					} else {
 						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
@@ -78,7 +99,18 @@ public class CommandManager implements CommandExecutor {
 				} else {
 					sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
 				}
-			} else {
+			} else if(args.length == 3)  {   
+				 if(args[0].equalsIgnoreCase("share")) {
+					if(sender instanceof Player) {
+						Player p = (Player) sender;
+						main.getMySQL().setPlayerPermission(Bukkit.getPlayer(args[1]).getUniqueId(),args[2]);
+						
+					}
+				 }
+				
+			
+			}
+			else {
 				sender.sendMessage(Colors.paint(main.getConfig().getString("args")));
 			}
 		} else {
@@ -93,7 +125,6 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	private void throwInfo(CommandSender sender) {
-	    
 
 	}
 

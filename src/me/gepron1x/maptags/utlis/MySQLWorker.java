@@ -63,8 +63,11 @@ public class MySQLWorker {
 					Statement statement = connection.createStatement();
 					statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + "(`id` VARCHAR(10), "
 							+ " name VARCHAR(20), " + " lore TINYTEXT," + " location TINYTEXT, " + " owner VARCHAR(36),"
-							+ " icon BLOB," + " PRIMARY KEY (id))");
-
+							+ " icon BLOB," + " type ENUM('GLOBAL','LOCAL')," + " PRIMARY KEY (id))");
+					Statement statement2 = connection.createStatement();
+					statement2.executeUpdate("CREATE TABLE IF NOT EXISTS permissions " +
+					"(`user` VARCHAR(36), " +
+					"permission VARCHAR(10))");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -79,18 +82,26 @@ public class MySQLWorker {
 		this.connection = c;
 	}
 
-	public void createMapTag(final MapTag tag) {
+	public void createMapTag(final MapTag tag, boolean isLocal) {
+		String dump;
+		if (isLocal == false) {
+			dump = "GLOBAL";
+		} else {
+			dump = "LOCAL";
+		}
+		final String dump2 = dump;
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 			public void run() {
 				try {
 					PreparedStatement statement = connection.prepareStatement(
-							"INSERT INTO maptags (id,name,lore,location,owner,icon) VALUES (?,?,?,?,?,?)");
+							"INSERT INTO maptags (id,name,lore,location,owner,icon,type) VALUES (?,?,?,?,?,?,?)");
 					statement.setString(1, tag.getId());
 					statement.setString(2, tag.getName());
 					statement.setString(3, tag.getLoreJson());
 					statement.setString(4, tag.getSerializedLocation());
 					statement.setString(5, tag.getOwner().toString());
 					statement.setString(6, tag.getSerializedIcon());
+					statement.setString(7, dump2);
 					statement.executeUpdate();
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -110,7 +121,7 @@ public class MySQLWorker {
 		try {
 			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-			ResultSet result = statement.executeQuery("SELECT * FROM maptags");
+			ResultSet result = statement.executeQuery("SELECT * FROM maptags WHERE type='GLOBAL'");
 			final Gson gson = new GsonBuilder().create();
 			while (result.next()) {
 				String id = result.getString("id");
@@ -144,6 +155,8 @@ public class MySQLWorker {
 
 	public String getTable() {
 		return table;
+
+		
 	}
 
 	public void deleteTag(final String id) {
@@ -168,13 +181,23 @@ public class MySQLWorker {
 
 	public List<MapTag> getPlayerMapTags(UUID player) {
 		List<MapTag> tags = new ArrayList<MapTag>();
+		
 		// Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
 		// @Override
 		// public void run() {
+		String vars = getPlayerPermissions(player);
+	 String sql = "SELECT * FROM maptags WHERE owner='" + player.toString() + "' AND type='LOCAL'";
+	 if(vars != "") sql = "SELECT * FROM maptags WHERE owner='" + player.toString() + "' AND type='LOCAL' OR id IN ("+vars+")";
+	 
 		try {
+			
+				
+			
 			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			ResultSet result = statement.executeQuery("SELECT * FROM maptags where owner=" + player.toString());
+			ResultSet result = statement
+					.executeQuery(sql);
+			
 
 			Gson gson = new Gson();
 			while (result.next()) {
@@ -191,6 +214,7 @@ public class MySQLWorker {
 						new HashMap<String, Object>().getClass());
 				ItemStack icon = ItemStack.deserialize(map);
 				tags.add(new MapTag(id, name, lore, owner, loc, icon));
+				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -201,5 +225,50 @@ public class MySQLWorker {
 
 		return tags;
 	}
+public String getPlayerPermissions(UUID player) {
+	Statement statement;
+	 List<String> perms = new ArrayList<String>();
+	try {
+		statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    ResultSet permz = statement.executeQuery("SELECT * FROM permissions WHERE `user`='"+player.toString()+"'");
+	   
+	    while(permz.next()) {
+	    	perms.add(permz.getString("permission"));
+	    }
+	} catch (SQLException e) {
+		// TODO Автоматически созданный блок catch
+		e.printStackTrace();
+	} 
+String result = "";
+for(String perm : perms) {
+	result = result+"'"+perm+"'";
+	if(!perms.get(perms.size()-1).equalsIgnoreCase(perm)) result = result+",";
+	plugin.send("\""+result+"\"");
+}
+    return result;
+}
+
+	public void setPlayerPermission(final UUID player,final String id) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					PreparedStatement statement = connection.prepareStatement(
+							"INSERT INTO permissions (`user`,permission) VALUES (?,?)");
+					statement.setString(1, player.toString());
+					statement.setString(2, id);
+					statement.executeUpdate();
+					
+				} catch (SQLException e) {
+					// TODO Автоматически созданный блок catch
+					e.printStackTrace();
+				}
+				
+			}
+			
+		});
+	}
+
 
 }

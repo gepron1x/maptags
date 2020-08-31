@@ -1,7 +1,10 @@
 package me.gepron1x.maptags.utlis;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,15 +16,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class GlobalMapTagsGUI implements InventoryHolder {
 
 	private List<Inventory> pages;
+	Map<ItemStack,MapTag> clickables;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
 	private int lastpage = 0;
 	private int page = 0;
 	private int lastslot = 0;
 	private Inventory openedPage;
 	private ItemStack nopage;
+	private String title;
 
-	public GlobalMapTagsGUI(List<MapTag> items) {
+	public GlobalMapTagsGUI(List<MapTag> items,String title) {
 		this.maptags = items;
+		this.clickables = new HashMap<ItemStack,MapTag>();
+		this.title = title;
 		this.pages = new ArrayList<Inventory>();
 		this.nopage = new ItemStack(Material.BARRIER);
 		ItemMeta meta = nopage.getItemMeta();
@@ -37,10 +44,12 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 
 	private void build() {
 		int i = lastpage+1;
-		Inventory inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + i);
+		Inventory inv = Bukkit.createInventory(this, 6 * 9, title + i);
 		pages.clear();
 		for (MapTag tag : maptags) {
-			inv.setItem(lastslot, tag.toItemStack());
+			ItemStack ist = tag.toItemStack();
+			inv.setItem(lastslot, ist);
+			clickables.put(ist, tag);
 			lastslot++;
 			if (lastslot == 45) {
 				inv.setItem(46, new ItemStack(Material.ARROW));
@@ -48,7 +57,7 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 				pages.add(inv);
 				lastpage++;
 				i = lastpage+1;
-				inv = Bukkit.createInventory(this, 6 * 9, "Глобальные метки #" + i);
+				inv = Bukkit.createInventory(this, 6 * 9, title + i);
 				lastslot = 0;
 			}
 		}
@@ -80,4 +89,8 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	public ItemStack getNoPage() {
 		return nopage;
 	}
+public MapTag getClickedTag(ItemStack icon) {
+	return clickables.get(icon);
+	
+    }
 }

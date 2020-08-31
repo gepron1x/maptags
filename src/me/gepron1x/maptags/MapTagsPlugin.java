@@ -36,13 +36,13 @@ public class MapTagsPlugin extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		this.saveDefaultConfig();
-		getCommand("maptag").setExecutor(new CommandManager());
+
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		saveCustomDefaultConfig();
 		saveDefaultMessages();
-
+		getCommand("maptag").setExecutor(new CommandManager());
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		send("&aPlugin enabled!");
 	}
@@ -72,7 +72,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		}
 	}
 
-	public void addTag(String id, String name, String lore, Player p) {
+	public void addTag(String id, String name, String lore, Player p, boolean isLocal) {
 		ItemStack e = p.getInventory().getItemInMainHand();
 		if (e == null)
 			e = new ItemStack(Material.BEDROCK);
@@ -85,8 +85,8 @@ public class MapTagsPlugin extends JavaPlugin {
 			lorear = to;
 		}
 		MapTag tag = new MapTag(id, name, lorear, p.getUniqueId(), p.getLocation(), e);
-		maptags.add(tag);
-		mySQL.createMapTag(tag);
+		if(isLocal == false) maptags.add(tag);
+		mySQL.createMapTag(tag,isLocal);
 	}
 
 	public void saveCustomDefaultConfig() {
