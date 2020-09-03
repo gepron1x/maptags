@@ -275,7 +275,7 @@ public void removePermission(final UUID player,final String id) {
 		@Override
 		public void run() {
 			try {
-			PreparedStatement statement = connection.prepareStatement("DELETE FROM permissions WHERE id=? AND user=?");
+			PreparedStatement statement = connection.prepareStatement("DELETE FROM permissions WHERE id=? AND `user`=?");
 			statement.setString(1, id);
 			statement.setString(2, player.toString());
 			statement.executeUpdate();

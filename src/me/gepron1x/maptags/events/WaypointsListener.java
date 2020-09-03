@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-
+import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.MapTag;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -42,6 +42,10 @@ public void addWayPoint(Player p,MapTag tag) {
 	waypoints.put(p.getUniqueId(), tag);
     }
 public void removeWayPoint(Player p) {
+	if(waypoints.get(p.getUniqueId()) == null) {
+		p.sendMessage(Colors.paint("&cВы не выбрали метку!"));
+		return;
+	}
 	waypoints.remove(p.getUniqueId());
 }
 

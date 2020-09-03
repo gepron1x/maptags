@@ -33,7 +33,8 @@ public class CommandManager implements CommandExecutor {
                        
 				} else if (args[0].equalsIgnoreCase("unselect")) {
 					if (sender instanceof Player) {
-						// unselect
+						Player p = (Player) sender;
+						main.getWaypoints().removeWayPoint(p);
 					} else {
 						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
 					}
