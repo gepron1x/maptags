@@ -1,5 +1,7 @@
 package me.gepron1x.maptags.commands;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,6 +24,14 @@ public class CommandManager implements CommandExecutor {
 	     break;
 		case "remove":
 		 removeCommand(sender,args);
+		 break;
+		case "list":
+		listCommand(sender,args);
+		break;
+		case "share":
+		case "unshare":
+		shareCommand(sender,args);
+		break;
 		}
 		return true;
 	}
@@ -48,5 +58,30 @@ public class CommandManager implements CommandExecutor {
 	    boolean isOk = main.removeTag(args[1], (Player) sender);
 	    if(isOk == true) sender.sendMessage("Метка успешно удалена.");
    }
+  private void listCommand(CommandSender sender,String[] args) {
+	  if(sender instanceof Player) {
+		  GlobalMapTagsGUI gui;
+		  Player p = (Player) sender;
+		  if(args[1].equalsIgnoreCase("local")) {
+			  gui = new GlobalMapTagsGUI(main.getMySQL().getPlayerMapTags(p.getUniqueId()),"Локальные метки");
+			 
+		  } else {
+			  gui = new GlobalMapTagsGUI(main.getGlobalList(),"Глобальные метки");
+		  }
+		  p.openInventory(gui.getInventory());
+	  }
+ 
+  }
+  private void shareCommand(CommandSender sender,String[] args) {
+		 if(sender instanceof Player) {
+			 UUID p = Bukkit.getPlayer(args[1]).getUniqueId();
+			 String id = args[2];
+			 if(args[0].equalsIgnoreCase("share")) {
+				 main.getMySQL().setPlayerPermission(p, id);
+			 } else if(args[0].equalsIgnoreCase("unshare")) {
+				 main.getMySQL().removePermission(p, id);
+			 }
+		 }
+  }
 
 }
