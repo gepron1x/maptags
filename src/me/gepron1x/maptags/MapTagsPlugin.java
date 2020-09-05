@@ -99,6 +99,20 @@ public class MapTagsPlugin extends JavaPlugin {
 		if(isLocal == false) maptags.add(tag);
 		mySQL.createMapTag(tag,isLocal);
 	}
+public boolean removeTag(String id, Player executor) {
+	MapTag tag = getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId()) == true).findAny()
+			.orElse(null);
+	if(tag == null) return false;
+	 if(tag.getOwner() != executor.getUniqueId()) {
+		 executor.sendMessage("Вам нельзя удалять метки других игроков.");
+		 return false;
+	 } 
+	 
+	 getGlobalList().remove(tag);
+	 
+	 return true;
+	
+}
 
 	public void saveCustomDefaultConfig() {
 		if (!tagsFile.exists()) {
