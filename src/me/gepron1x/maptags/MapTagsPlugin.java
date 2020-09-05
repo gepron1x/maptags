@@ -77,9 +77,16 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void addTag(String id, String name, String lore, Player p, boolean isLocal) {
+		if(getGlobalList().stream().anyMatch(marker -> id.equalsIgnoreCase(marker.getId())) == true) {
+			p.sendMessage("Метка с этим айди уже существует!");
+			return;
+		}
 		ItemStack e = p.getInventory().getItemInMainHand();
-		if (e == null)
+		if (e == null || e.getType() == Material.AIR)
 			e = new ItemStack(Material.BEDROCK);
+		
+		lore = lore.replace('_', ' ');
+		name = name.replace('_', ' ');
 		List<String> lorear = new ArrayList<String>();
 		if (lore.split(";").length != 1) {
 			lorear = Arrays.asList(lore.split(";"));

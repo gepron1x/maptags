@@ -69,13 +69,14 @@ public class CommandManager implements CommandExecutor {
 						sender.sendMessage(Colors.paint(main.getMessages().getString("player-only")));
 					}
 				} else if (args[0].equalsIgnoreCase("remove")) {
-					for (MapTag tag : main.getGlobalList()) {
-						if (tag.getId().equalsIgnoreCase(args[1])) {
-							main.getGlobalList().remove(tag);
-							main.getMySQL().deleteTag(args[1]);
-							break;
-						}
-					}
+					 MapTag tag = main.getGlobalList().stream().filter(marker -> "id".equals(marker.getId()))
+					  .findAny()
+					  .orElse(null);
+					 if(tag != null) {
+						 main.getGlobalList().remove(tag);
+					 } else {
+						 sender.sendMessage("Такой метки не существует!");
+					 }
 					// sender.sendMessage(Colors.paint(main.getMessages().getString("command.removed")));
 				} 
 				
