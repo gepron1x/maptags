@@ -1,14 +1,10 @@
 package me.gepron1x.maptags.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
