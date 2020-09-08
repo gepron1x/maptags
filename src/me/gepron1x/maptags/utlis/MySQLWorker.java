@@ -56,6 +56,8 @@ public class MySQLWorker {
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
+					  plugin.send("Плагин выключается, ибо mysql не настроен :)");
+			         Bukkit.getPluginManager().disablePlugin(plugin);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -275,7 +277,7 @@ public void removePermission(final UUID player,final String id) {
 		@Override
 		public void run() {
 			try {
-			PreparedStatement statement = connection.prepareStatement("DELETE FROM permissions WHERE id=? AND `user`=?");
+			PreparedStatement statement = connection.prepareStatement("DELETE FROM permissions WHERE permission=? AND `user`=?");
 			statement.setString(1, id);
 			statement.setString(2, player.toString());
 			statement.executeUpdate();
@@ -287,6 +289,48 @@ public void removePermission(final UUID player,final String id) {
 		}
 		
 	});
+}
+public MapTag getMapTag(String identificator) {
+	Statement statement;
+	MapTag tag = null;
+	try {
+		statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    ResultSet result = statement.executeQuery("SELECT * FROM permissions WHERE id='"+identificator+"'");
+	    Gson gson = new Gson();
+		String id = result.getString("id");
+		@SuppressWarnings("unchecked")
+		List<String> lore = gson.fromJson(result.getString("lore"), new ArrayList<String>().getClass());
+		String name = result.getString("name");
+		@SuppressWarnings("unchecked")
+		Location loc = Location.deserialize(
+				gson.fromJson(result.getString("location"), new HashMap<String, Object>().getClass()));
+		UUID owner = UUID.fromString(result.getString("owner"));
+		@SuppressWarnings("unchecked")
+		Map<String, Object> map = gson.fromJson(result.getString("icon"),
+				new HashMap<String, Object>().getClass());
+		ItemStack icon = ItemStack.deserialize(map);
+		tag = new MapTag(id,name,lore,owner,loc,icon);
+	} catch (SQLException e) {
+		// TODO Автоматически созданный блок catch
+		e.printStackTrace();
+	} 
+	return tag;
+}
+public void editMapTag(String id,String key,String object) {
+	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+		@Override
+		public void run() {
+			try {
+				Statement statement = connection.createStatement();
+				statement.executeUpdate("UPDATE maptags SET "+key+"='"+object+"'");
+			} catch (SQLException e) {
+				// TODO Автоматически созданный блок catch
+				e.printStackTrace();
+			}
+		}
+		
+	});
+	
 }
 
 

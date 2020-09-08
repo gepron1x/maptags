@@ -1,12 +1,18 @@
 package me.gepron1x.maptags.commands;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import com.google.gson.Gson;
+
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
@@ -35,6 +41,12 @@ public class CommandManager implements CommandExecutor {
 			case "unshare":
 				shareCommand(sender, args);
 				break;
+			case "unselect":
+			   main.getWaypoints().removeWayPoint((Player) sender);
+			 break;
+			case "edit":
+			  editCommand(sender,args);
+			  break;
 			}
 			return true;
 		} else {
@@ -71,10 +83,10 @@ public class CommandManager implements CommandExecutor {
 		GlobalMapTagsGUI gui;
 		Player p = (Player) sender;
 		if (args[1].equalsIgnoreCase("local")) {
-			gui = new GlobalMapTagsGUI(main.getMySQL().getPlayerMapTags(p.getUniqueId()), "Локальные метки");
+			gui = new GlobalMapTagsGUI(main.getMySQL().getPlayerMapTags(p.getUniqueId()), "Локальные метки №");
 
 		} else {
-			gui = new GlobalMapTagsGUI(main.getGlobalList(), "Глобальные метки");
+			gui = new GlobalMapTagsGUI(main.getGlobalList(), "Глобальные метки №");
 		}
 		p.openInventory(gui.getInventory());
 
@@ -88,6 +100,58 @@ public class CommandManager implements CommandExecutor {
 		} else if (args[0].equalsIgnoreCase("unshare")) {
 			main.getMySQL().removePermission(p, id);
 		}
+	}
+	private void editCommand(CommandSender sender,String[] args) {
+		Gson gson = new Gson();
+		boolean isLocal = false;
+		String object = "";
+		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equalsIgnoreCase(marker.getId()) == true).findAny()
+				.orElse(null);
+		if(tag == null) {
+		tag = main.getMySQL().getMapTag(args[1]);
+		isLocal = true;
+		}
+		if(tag == null) {
+			sender.sendMessage("Извини, но такой метки не существует. :)");
+			return;
+		}
+		Player p = (Player) sender;
+		int index = main.getGlobalList().lastIndexOf(tag);
+		if(tag.getOwner().equals(p.getUniqueId())) {
+			switch(args[2]) {
+			case "name":
+			 tag.setName(args[3]);
+			 object = args[3];
+			
+			break;
+			 case "lore":
+				String lore = args[3].replace('_', ' ');
+				List<String> loredump = MapTagsPlugin.getLoreAsList(lore);
+			  tag.setLore(loredump);
+			  object = gson.toJson(loredump);
+			 break;
+			 case "location":
+				Location location = p.getLocation();
+				tag.setLocation(location);
+			 object = gson.toJson(location.serialize());
+			 case "icon":
+				 ItemStack is = p.getInventory().getItemInMainHand();
+				 tag.setIcon(is);
+				object = gson.toJson(is.serialize());
+				 break;
+			 default: 
+				 sender.sendMessage("Извини, но такого параметра не существует :)");
+				 return;
+			}
+			if(isLocal == false) {
+				main.getGlobalList().set(index, tag);
+			}
+			main.getMySQL().editMapTag(tag.getId(), args[2], object);
+	
+			
+		}
+		
+		
 	}
 
 }

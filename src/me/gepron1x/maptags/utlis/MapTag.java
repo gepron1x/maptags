@@ -84,4 +84,12 @@ public class MapTag {
 public Location getLocation() {
 	return location;
 }
+
+public void setLore(List<String> lore) {
+	this.lore = lore;
+	
+}
+public void setIcon(ItemStack icon) {
+	this.icon = icon;
+   }
 }

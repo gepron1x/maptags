@@ -87,15 +87,8 @@ public class MapTagsPlugin extends JavaPlugin {
 		
 		lore = lore.replace('_', ' ');
 		name = name.replace('_', ' ');
-		List<String> lorear = new ArrayList<String>();
-		if (lore.split(";").length != 1) {
-			lorear = Arrays.asList(lore.split(";"));
-		} else {
-			List<String> to = new ArrayList<String>();
-			to.add("test");
-			lorear = to;
-		}
-		MapTag tag = new MapTag(id, name, lorear, p.getUniqueId(), p.getLocation(), e);
+		
+		MapTag tag = new MapTag(id, name, getLoreAsList(lore), p.getUniqueId(), p.getLocation(), e);
 		if(isLocal == false) maptags.add(tag);
 		mySQL.createMapTag(tag,isLocal);
 	}
@@ -174,4 +167,14 @@ public boolean removeTag(String id, Player executor) {
  public WaypointsListener getWaypoints() {
 	 return this.waypoints;
  }
+public static List<String> getLoreAsList(String lore) {
+	List<String> lorear = new ArrayList<String>();
+	if (lore.split(";").length != 1) {
+		lorear = Arrays.asList(lore.split(";"));
+	} else {
+		List<String> to = new ArrayList<String>();
+		lorear = to;
+	}
+	return lorear;
+}
 }
