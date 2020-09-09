@@ -1,18 +1,17 @@
 package me.gepron1x.maptags;
 
 import java.io.File;
+
 import me.gepron1x.maptags.utlis.MySQLWorker;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
-
-import org.bukkit.Bukkit;
+import java.util.stream.Collectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -35,7 +34,6 @@ public class MapTagsPlugin extends JavaPlugin {
 	private File msgFile = new File(getDataFolder(), "messages.yml");
 	private FileConfiguration messages;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
-	private HashMap<UUID, MapTag> selectedTags = new HashMap<UUID, MapTag>();
 
 	public void onEnable() {
 		instance = this;
@@ -148,16 +146,26 @@ public boolean removeTag(String id, Player executor) {
 	}
 
 	public List<MapTag> getGlobalList() {
-		return maptags;
+		List<MapTag> global = maptags.stream().filter(marker -> false == marker.getIsLocal()).collect(Collectors.toList());
+		return global;
 	}
+public List<MapTag> getLocalList(UUID player) {
+	List<String> perms = getMySQL().getPlayerPermissionsAsList(player);
+	
+	List<MapTag> local = maptags.stream().
+			filter(marker -> true == marker.getIsLocal()).
+			collect(Collectors.toList());
+	List<MapTag> dump = local.stream().
+			filter(marker -> player.equals(marker.getOwner()) || perms.contains(marker.getId())).
+			collect(Collectors.toList());
+	return dump;
+	
+}
 
 	public MySQLWorker getMySQL() {
 		return mySQL;
 	}
 
-	public HashMap<UUID, MapTag> getSelectedTags() {
-		return selectedTags;
-	}
 
 	public FileConfiguration getMessages() {
 		return messages;

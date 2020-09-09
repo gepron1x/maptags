@@ -223,6 +223,22 @@ for(String perm : perms) {
 }
     return result;
 }
+public List<String> getPlayerPermissionsAsList(UUID player) {
+	 List<String> perms = new ArrayList<String>();
+	 Statement statement;
+		try {
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		    ResultSet permz = statement.executeQuery("SELECT * FROM permissions WHERE `user`='"+player.toString()+"'");
+		   
+		    while(permz.next()) {
+		    	perms.add(permz.getString("permission"));
+		    }
+		} catch (SQLException e) {
+			// TODO Автоматически созданный блок catch
+			e.printStackTrace();
+		} 
+	return perms;
+}
 
 	public void setPlayerPermission(final UUID player,final String id) {
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {

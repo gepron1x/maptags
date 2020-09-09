@@ -83,7 +83,7 @@ public class CommandManager implements CommandExecutor {
 		GlobalMapTagsGUI gui;
 		Player p = (Player) sender;
 		if (args[1].equalsIgnoreCase("local")) {
-			gui = new GlobalMapTagsGUI(main.getMySQL().getPlayerMapTags(p.getUniqueId()), "Локальные метки №");
+			gui = new GlobalMapTagsGUI(main.getLocalList(p.getUniqueId()), "Локальные метки №");
 
 		} else {
 			gui = new GlobalMapTagsGUI(main.getGlobalList(), "Глобальные метки №");
