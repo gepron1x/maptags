@@ -23,7 +23,7 @@ public class CommandManager implements CommandExecutor {
 	public MapTagsPlugin main = MapTagsPlugin.getInstance();
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		
+
 		if (args.length == 0)
 			return true;
 		if (sender instanceof Player) {
@@ -42,11 +42,11 @@ public class CommandManager implements CommandExecutor {
 				shareCommand(sender, args);
 				break;
 			case "unselect":
-			   main.getWaypoints().removeWayPoint((Player) sender);
-			 break;
+				main.getWaypoints().removeWayPoint((Player) sender);
+				break;
 			case "edit":
-			  editCommand(sender,args);
-			  break;
+				editCommand(sender, args);
+				break;
 			}
 			return true;
 		} else {
@@ -67,6 +67,7 @@ public class CommandManager implements CommandExecutor {
 	private void createCommand(CommandSender sender, String[] args) {
 		boolean isLocal = false;
 		Player p = (Player) sender;
+
 		if (args[4].equalsIgnoreCase("local"))
 			isLocal = true;
 		main.addTag(args[1], args[2], args[3], p, isLocal);
@@ -93,65 +94,78 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	private void shareCommand(CommandSender sender, String[] args) {
-		UUID p = Bukkit.getPlayer(args[1]).getUniqueId();
+		UUID playertoshare = Bukkit.getPlayer(args[1]).getUniqueId();
+		Player p = (Player) sender;
 		String id = args[2];
+		MapTag tag = main.getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId())).findAny()
+				.orElse(null);
+		if (tag == null) {
+			sender.sendMessage("Такой метки либо не существует, либо она глобальная.");
+			return;
+		}
+
+		if (!tag.getOwner().equals(p.getUniqueId())) {
+			sender.sendMessage("Это не ваша метка!");
+			return;
+		}
+		;
 		if (args[0].equalsIgnoreCase("share")) {
-			main.getMySQL().setPlayerPermission(p, id);
+			main.getMySQL().setPlayerPermission(playertoshare, id);
 		} else if (args[0].equalsIgnoreCase("unshare")) {
-			main.getMySQL().removePermission(p, id);
+			main.getMySQL().removePermission(playertoshare, id);
 		}
 	}
-	private void editCommand(CommandSender sender,String[] args) {
+
+	private void editCommand(CommandSender sender, String[] args) {
 		Gson gson = new Gson();
 		boolean isLocal = false;
 		String object = "";
-		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equalsIgnoreCase(marker.getId()) == true).findAny()
-				.orElse(null);
-		if(tag == null) {
-		tag = main.getMySQL().getMapTag(args[1]);
-		isLocal = true;
+		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equalsIgnoreCase(marker.getId()) == true)
+				.findAny().orElse(null);
+		if (tag == null) {
+			tag = main.getMySQL().getMapTag(args[1]);
+			isLocal = true;
 		}
-		if(tag == null) {
+		if (tag == null) {
 			sender.sendMessage("Извини, но такой метки не существует. :)");
 			return;
 		}
 		Player p = (Player) sender;
 		int index = main.getGlobalList().lastIndexOf(tag);
-		if(tag.getOwner().equals(p.getUniqueId())) {
-			switch(args[2]) {
+		if (tag.getOwner().equals(p.getUniqueId())) {
+			switch (args[2]) {
 			case "name":
-			 tag.setName(args[3]);
-			 object = args[3];
-			
-			break;
-			 case "lore":
+				tag.setName(args[3]);
+				object = args[3];
+
+				break;
+			case "lore":
 				String lore = args[3].replace('_', ' ');
 				List<String> loredump = MapTagsPlugin.getLoreAsList(lore);
-			  tag.setLore(loredump);
-			  object = gson.toJson(loredump);
-			 break;
-			 case "location":
+				tag.setLore(loredump);
+				object = gson.toJson(loredump);
+				break;
+			case "location":
 				Location location = p.getLocation();
 				tag.setLocation(location);
-			 object = gson.toJson(location.serialize());
-			 case "icon":
-				 ItemStack is = p.getInventory().getItemInMainHand();
-				 tag.setIcon(is);
+				object = gson.toJson(location.serialize());
+			case "icon":
+				ItemStack is = p.getInventory().getItemInMainHand();
+				tag.setIcon(is);
 				object = gson.toJson(is.serialize());
-				 break;
-			 default: 
-				 sender.sendMessage("Извини, но такого параметра не существует :)");
-				 return;
+				break;
+			default:
+				sender.sendMessage("Извини, но такого параметра не существует :)");
+				return;
 			}
-			if(isLocal == false) {
+			if (isLocal == false) {
 				main.getGlobalList().set(index, tag);
 			}
 			main.getMySQL().editMapTag(tag.getId(), args[2], object);
-	
-			
+
 		}
-		
-		
+
 	}
+
 
 }
