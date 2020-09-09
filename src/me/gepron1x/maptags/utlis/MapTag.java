@@ -17,8 +17,10 @@ public class MapTag {
 	private UUID owner;
 	private Location location;
 	private ItemStack icon;
+	private boolean isLocal;
 
-	public MapTag(String id, String name, List<String> lore, UUID owner, Location loc, ItemStack icon) {
+	public MapTag(String id, String name, List<String> lore, UUID owner, Location loc, ItemStack icon,boolean isLocal) {
+		this.isLocal = isLocal;
 		this.id = id;
 		this.name = name;
 		this.lore = lore;
@@ -92,4 +94,7 @@ public void setLore(List<String> lore) {
 public void setIcon(ItemStack icon) {
 	this.icon = icon;
    }
+public boolean getIsLocal() {
+	return isLocal;
+}
 }

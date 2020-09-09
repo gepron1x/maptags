@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -88,9 +90,9 @@ public class MapTagsPlugin extends JavaPlugin {
 		lore = lore.replace('_', ' ');
 		name = name.replace('_', ' ');
 		
-		MapTag tag = new MapTag(id, name, getLoreAsList(lore), p.getUniqueId(), p.getLocation(), e);
-		if(isLocal == false) maptags.add(tag);
-		mySQL.createMapTag(tag,isLocal);
+		MapTag tag = new MapTag(id, name, getLoreAsList(lore), p.getUniqueId(), p.getLocation(), e,isLocal);
+	    maptags.add(tag);
+		mySQL.createMapTag(tag);
 	}
 public boolean removeTag(String id, Player executor) {
 	MapTag tag = getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId()) == true).findAny()

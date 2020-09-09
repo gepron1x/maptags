@@ -84,9 +84,9 @@ public class MySQLWorker {
 		this.connection = c;
 	}
 
-	public void createMapTag(final MapTag tag, boolean isLocal) {
+	public void createMapTag(final MapTag tag) {
 		String dump;
-		if (isLocal == false) {
+		if (tag.getIsLocal() == false) {
 			dump = "GLOBAL";
 		} else {
 			dump = "LOCAL";
@@ -123,22 +123,9 @@ public class MySQLWorker {
 		try {
 			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-			ResultSet result = statement.executeQuery("SELECT * FROM maptags WHERE type='GLOBAL'");
-			final Gson gson = new GsonBuilder().create();
+			ResultSet result = statement.executeQuery("SELECT * FROM maptags");
 			while (result.next()) {
-				String id = result.getString("id");
-				@SuppressWarnings("unchecked")
-				List<String> lore = gson.fromJson(result.getString("lore"), new ArrayList<String>().getClass());
-				String name = result.getString("name");
-				@SuppressWarnings("unchecked")
-				Location loc = Location.deserialize(
-						gson.fromJson(result.getString("location"), new HashMap<String, Object>().getClass()));
-				UUID owner = UUID.fromString(result.getString("owner"));
-				@SuppressWarnings("unchecked")
-				Map<String, Object> map = gson.fromJson(result.getString("icon"),
-						new HashMap<String, Object>().getClass());
-				ItemStack icon = ItemStack.deserialize(map);
-				tags.add(new MapTag(id, name, lore, owner, loc, icon));
+				tags.add(buildTag(result));
 
 			}
 		} catch (SQLException e) {
@@ -201,21 +188,8 @@ public class MySQLWorker {
 					.executeQuery(sql);
 			
 
-			Gson gson = new Gson();
 			while (result.next()) {
-				String id = result.getString("id");
-				@SuppressWarnings("unchecked")
-				List<String> lore = gson.fromJson(result.getString("lore"), new ArrayList<String>().getClass());
-				String name = result.getString("name");
-				@SuppressWarnings("unchecked")
-				Location loc = Location.deserialize(
-						gson.fromJson(result.getString("location"), new HashMap<String, Object>().getClass()));
-				UUID owner = UUID.fromString(result.getString("owner"));
-				@SuppressWarnings("unchecked")
-				Map<String, Object> map = gson.fromJson(result.getString("icon"),
-						new HashMap<String, Object>().getClass());
-				ItemStack icon = ItemStack.deserialize(map);
-				tags.add(new MapTag(id, name, lore, owner, loc, icon));
+				tags.add(buildTag(result));
 				
 			}
 		} catch (SQLException e) {
@@ -293,29 +267,17 @@ public void removePermission(final UUID player,final String id) {
 public MapTag getMapTag(String identificator) {
 	Statement statement;
 	MapTag tag = null;
+	ResultSet result = null;
 	try {
 		statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-	    ResultSet result = statement.executeQuery("SELECT * FROM permissions WHERE id='"+identificator+"'");
-	    Gson gson = new Gson();
-		String id = result.getString("id");
-		@SuppressWarnings("unchecked")
-		List<String> lore = gson.fromJson(result.getString("lore"), new ArrayList<String>().getClass());
-		String name = result.getString("name");
-		@SuppressWarnings("unchecked")
-		Location loc = Location.deserialize(
-				gson.fromJson(result.getString("location"), new HashMap<String, Object>().getClass()));
-		UUID owner = UUID.fromString(result.getString("owner"));
-		@SuppressWarnings("unchecked")
-		Map<String, Object> map = gson.fromJson(result.getString("icon"),
-				new HashMap<String, Object>().getClass());
-		ItemStack icon = ItemStack.deserialize(map);
-		tag = new MapTag(id,name,lore,owner,loc,icon);
-	} catch (SQLException e) {
-		// TODO Автоматически созданный блок catch
-		e.printStackTrace();
-	} 
-	return tag;
+	    result = statement.executeQuery("SELECT * FROM maptags WHERE id='"+identificator+"'");
+	    
+} catch (SQLException e) {
+	e.printStackTrace();
+	
 }
+	return buildTag(result);
+}	
 public void editMapTag(String id,String key,String object) {
 	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 		@Override
@@ -331,6 +293,42 @@ public void editMapTag(String id,String key,String object) {
 		
 	});
 	
+}
+private MapTag buildTag(ResultSet res) {
+	Gson gson = new Gson();
+	MapTag tag = null;
+	String id;
+	try {		
+		id = res.getString("id");
+		@SuppressWarnings("unchecked")
+		List<String> lore = gson.fromJson(res.getString("lore"), new ArrayList<String>().getClass());
+		String name = res.getString("name");
+		@SuppressWarnings("unchecked")
+		Location loc = Location.deserialize(
+				gson.fromJson(res.getString("location"), new HashMap<String, Object>().getClass()));
+		UUID owner = UUID.fromString(res.getString("owner"));
+		@SuppressWarnings("unchecked")
+		Map<String, Object> map = gson.fromJson(res.getString("icon"),
+				new HashMap<String, Object>().getClass());
+		boolean isLocal = false;
+		switch(res.getString("type")) {
+		case "LOCAL":
+			isLocal = true;
+			break;
+		case "GLOBAL":
+			isLocal = false;
+			break;
+		
+		}
+		ItemStack icon = ItemStack.deserialize(map);
+		tag = new MapTag(id,name,lore,owner,loc,icon,isLocal);
+		return tag;
+	} catch (SQLException e) {
+		// TODO Автоматически созданный блок catch
+		e.printStackTrace();
+	}
+	return tag;
+
 }
 
 
