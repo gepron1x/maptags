@@ -19,7 +19,8 @@ public class MapTag {
 	private ItemStack icon;
 	private boolean isLocal;
 
-	public MapTag(String id, String name, List<String> lore, UUID owner, Location loc, ItemStack icon,boolean isLocal) {
+	public MapTag(String id, String name, List<String> lore, UUID owner, Location loc, ItemStack icon,
+			boolean isLocal) {
 		this.isLocal = isLocal;
 		this.id = id;
 		this.name = name;
@@ -83,18 +84,21 @@ public class MapTag {
 		return gson.toJson(lore);
 
 	}
-public Location getLocation() {
-	return location;
-}
 
-public void setLore(List<String> lore) {
-	this.lore = lore;
-	
-}
-public void setIcon(ItemStack icon) {
-	this.icon = icon;
-   }
-public boolean getIsLocal() {
-	return isLocal;
-}
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLore(List<String> lore) {
+		this.lore = lore;
+
+	}
+
+	public void setIcon(ItemStack icon) {
+		this.icon = icon;
+	}
+
+	public boolean getIsLocal() {
+		return isLocal;
+	}
 }

@@ -2,7 +2,6 @@ package me.gepron1x.maptags;
 
 import java.io.File;
 
-
 import me.gepron1x.maptags.utlis.MySQLWorker;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,8 +37,8 @@ public class MapTagsPlugin extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		this.saveDefaultConfig();
-        waypoints = new WaypointsListener();
-        
+		waypoints = new WaypointsListener();
+
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
@@ -77,30 +76,33 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void addTag(String id, String name, String lore, Player p, boolean isLocal) {
-		if(getGlobalList().stream().anyMatch(marker -> id.equalsIgnoreCase(marker.getId())) == true) {
+		if (getGlobalList().stream().anyMatch(marker -> id.equalsIgnoreCase(marker.getId())) == true) {
 			p.sendMessage("Метка с этим айди уже существует!");
 			return;
 		}
 		ItemStack e = p.getInventory().getItemInMainHand();
-		MapTag tag = new MapTag(id, Colors.buildName(name), Colors.stringAsList(lore), p.getUniqueId(), p.getLocation(), Colors.buildIcon(e),isLocal);
-	    maptags.add(tag);
+		MapTag tag = new MapTag(id, Colors.buildName(name), Colors.stringAsList(lore), p.getUniqueId(), p.getLocation(),
+				Colors.buildIcon(e), isLocal);
+		maptags.add(tag);
 		mySQL.createMapTag(tag);
 	}
-public boolean removeTag(String id, Player executor) {
-	MapTag tag = getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId()) == true).findAny()
-			.orElse(null);
-	if(tag == null) return false;
-	 if(tag.getOwner() != executor.getUniqueId()) {
-		 executor.sendMessage("Вам нельзя удалять метки других игроков.");
-		 return false;
-	 } 
-	 
-	 getGlobalList().remove(tag);
-	 getMySQL().deleteTag(tag.getId());
-	 
-	 return true;
-	
-}
+
+	public boolean removeTag(String id, Player executor) {
+		MapTag tag = getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId()) == true).findAny()
+				.orElse(null);
+		if (tag == null)
+			return false;
+		if (tag.getOwner() != executor.getUniqueId()) {
+			executor.sendMessage("Вам нельзя удалять метки других игроков.");
+			return false;
+		}
+
+		getGlobalList().remove(tag);
+		getMySQL().deleteTag(tag.getId());
+
+		return true;
+
+	}
 
 	public void saveCustomDefaultConfig() {
 		if (!tagsFile.exists()) {
@@ -141,25 +143,25 @@ public boolean removeTag(String id, Player executor) {
 	}
 
 	public List<MapTag> getGlobalList() {
-		List<MapTag> global = maptags.stream().filter(marker -> false == marker.getIsLocal()).collect(Collectors.toList());
+		List<MapTag> global = maptags.stream().filter(marker -> false == marker.getIsLocal())
+				.collect(Collectors.toList());
 		return global;
 	}
-public List<MapTag> getLocalList(UUID player) {
-	List<String> perms = getMySQL().getPlayerPermissionsAsList(player);
-	List<MapTag> local = maptags.stream().
-			filter(marker -> true == marker.getIsLocal()).
-			collect(Collectors.toList());
-	List<MapTag> dump = local.stream().
-			filter(marker -> player.equals(marker.getOwner()) || perms.contains(marker.getId())).
-			collect(Collectors.toList());
-	return dump;
-	
-}
+
+	public List<MapTag> getLocalList(UUID player) {
+		List<String> perms = getMySQL().getPlayerPermissionsAsList(player);
+		List<MapTag> local = maptags.stream().filter(marker -> true == marker.getIsLocal())
+				.collect(Collectors.toList());
+		List<MapTag> dump = local.stream()
+				.filter(marker -> player.equals(marker.getOwner()) || perms.contains(marker.getId()))
+				.collect(Collectors.toList());
+		return dump;
+
+	}
 
 	public MySQLWorker getMySQL() {
 		return mySQL;
 	}
-
 
 	public FileConfiguration getMessages() {
 		return messages;
@@ -168,7 +170,8 @@ public List<MapTag> getLocalList(UUID player) {
 	public void loadTagsfromMySQL(List<MapTag> tags) {
 		this.maptags.addAll(tags);
 	}
- public WaypointsListener getWaypoints() {
-	 return this.waypoints;
- }
+
+	public WaypointsListener getWaypoints() {
+		return this.waypoints;
+	}
 }

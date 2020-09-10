@@ -56,8 +56,8 @@ public class MySQLWorker {
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
-					  plugin.send("Плагин выключается, ибо mysql не настроен :)");
-			         Bukkit.getPluginManager().disablePlugin(plugin);
+					plugin.send("Плагин выключается, ибо mysql не настроен :)");
+					Bukkit.getPluginManager().disablePlugin(plugin);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -67,9 +67,8 @@ public class MySQLWorker {
 							+ " name VARCHAR(20), " + " lore TINYTEXT," + " location TINYTEXT, " + " owner VARCHAR(36),"
 							+ " icon BLOB," + " type ENUM('GLOBAL','LOCAL')," + " PRIMARY KEY (id))");
 					Statement statement2 = connection.createStatement();
-					statement2.executeUpdate("CREATE TABLE IF NOT EXISTS permissions " +
-					"(`user` VARCHAR(36), " +
-					"permission VARCHAR(10))");
+					statement2.executeUpdate("CREATE TABLE IF NOT EXISTS permissions " + "(`user` VARCHAR(36), "
+							+ "permission VARCHAR(10))");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -145,7 +144,6 @@ public class MySQLWorker {
 	public String getTable() {
 		return table;
 
-		
 	}
 
 	public void deleteTag(final String id) {
@@ -170,27 +168,25 @@ public class MySQLWorker {
 
 	public List<MapTag> getPlayerMapTags(UUID player) {
 		List<MapTag> tags = new ArrayList<MapTag>();
-		
+
 		// Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
 		// @Override
 		// public void run() {
 		String vars = getPlayerPermissions(player);
-	 String sql = "SELECT * FROM maptags WHERE owner='" + player.toString() + "' AND type='LOCAL'";
-	 if(vars != "") sql = "SELECT * FROM maptags WHERE owner='" + player.toString() + "' AND type='LOCAL' OR id IN ("+vars+")";
-	 
+		String sql = "SELECT * FROM maptags WHERE owner='" + player.toString() + "' AND type='LOCAL'";
+		if (vars != "")
+			sql = "SELECT * FROM maptags WHERE owner='" + player.toString() + "' AND type='LOCAL' OR id IN (" + vars
+					+ ")";
+
 		try {
-			
-				
-			
+
 			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			ResultSet result = statement
-					.executeQuery(sql);
-			
+			ResultSet result = statement.executeQuery(sql);
 
 			while (result.next()) {
 				tags.add(buildTag(result));
-				
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -201,150 +197,157 @@ public class MySQLWorker {
 
 		return tags;
 	}
-public String getPlayerPermissions(UUID player) {
-	Statement statement;
-	 List<String> perms = new ArrayList<String>();
-	try {
-		statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-	    ResultSet permz = statement.executeQuery("SELECT * FROM permissions WHERE `user`='"+player.toString()+"'");
-	   
-	    while(permz.next()) {
-	    	perms.add(permz.getString("permission"));
-	    }
-	} catch (SQLException e) {
-		// TODO Автоматически созданный блок catch
-		e.printStackTrace();
-	} 
-String result = "";
-for(String perm : perms) {
-	result = result+"'"+perm+"'";
-	if(!perms.get(perms.size()-1).equalsIgnoreCase(perm)) result = result+",";
-	plugin.send("\""+result+"\"");
-}
-    return result;
-}
-public List<String> getPlayerPermissionsAsList(UUID player) {
-	 List<String> perms = new ArrayList<String>();
-	 Statement statement;
+
+	public String getPlayerPermissions(UUID player) {
+		Statement statement;
+		List<String> perms = new ArrayList<String>();
 		try {
 			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		    ResultSet permz = statement.executeQuery("SELECT * FROM permissions WHERE `user`='"+player.toString()+"'");
-		   
-		    while(permz.next()) {
-		    	perms.add(permz.getString("permission"));
-		    }
+			ResultSet permz = statement
+					.executeQuery("SELECT * FROM permissions WHERE `user`='" + player.toString() + "'");
+
+			while (permz.next()) {
+				perms.add(permz.getString("permission"));
+			}
 		} catch (SQLException e) {
 			// TODO Автоматически созданный блок catch
 			e.printStackTrace();
-		} 
-	return perms;
-}
+		}
+		String result = "";
+		for (String perm : perms) {
+			result = result + "'" + perm + "'";
+			if (!perms.get(perms.size() - 1).equalsIgnoreCase(perm))
+				result = result + ",";
+			plugin.send("\"" + result + "\"");
+		}
+		return result;
+	}
 
-	public void setPlayerPermission(final UUID player,final String id) {
+	public List<String> getPlayerPermissionsAsList(UUID player) {
+		List<String> perms = new ArrayList<String>();
+		Statement statement;
+		try {
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ResultSet permz = statement
+					.executeQuery("SELECT * FROM permissions WHERE `user`='" + player.toString() + "'");
+
+			while (permz.next()) {
+				perms.add(permz.getString("permission"));
+			}
+		} catch (SQLException e) {
+			// TODO Автоматически созданный блок catch
+			e.printStackTrace();
+		}
+		return perms;
+	}
+
+	public void setPlayerPermission(final UUID player, final String id) {
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					PreparedStatement statement = connection.prepareStatement(
-							"INSERT INTO permissions (`user`,permission) VALUES (?,?)");
+					PreparedStatement statement = connection
+							.prepareStatement("INSERT INTO permissions (`user`,permission) VALUES (?,?)");
 					statement.setString(1, player.toString());
 					statement.setString(2, id);
 					statement.executeUpdate();
-					
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+
+		});
+	}
+
+	public void removePermission(final UUID player, final String id) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					PreparedStatement statement = connection
+							.prepareStatement("DELETE FROM permissions WHERE permission=? AND `user`=?");
+					statement.setString(1, id);
+					statement.setString(2, player.toString());
+					statement.executeUpdate();
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+
+		});
+	}
+
+	public MapTag getMapTag(String identificator) {
+		Statement statement;
+		ResultSet result = null;
+		try {
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			result = statement.executeQuery("SELECT * FROM maptags WHERE id='" + identificator + "'");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+		return buildTag(result);
+	}
+
+	public void editMapTag(String id, String key, String object) {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Statement statement = connection.createStatement();
+					statement.executeUpdate("UPDATE maptags SET " + key + "='" + object + "'");
 				} catch (SQLException e) {
 					// TODO Автоматически созданный блок catch
 					e.printStackTrace();
 				}
-				
 			}
-			
+
 		});
+
 	}
-public void removePermission(final UUID player,final String id) {
-	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-		@Override
-		public void run() {
-			try {
-			PreparedStatement statement = connection.prepareStatement("DELETE FROM permissions WHERE permission=? AND `user`=?");
-			statement.setString(1, id);
-			statement.setString(2, player.toString());
-			statement.executeUpdate();
+	private MapTag buildTag(ResultSet res) {
+		Gson gson = new Gson();
+		MapTag tag = null;
+		String id;
+		try {
+			id = res.getString("id");
+			@SuppressWarnings("unchecked")
+			List<String> lore = gson.fromJson(res.getString("lore"), new ArrayList<String>().getClass());
+			String name = res.getString("name");
+			@SuppressWarnings("unchecked")
+			Location loc = Location
+					.deserialize(gson.fromJson(res.getString("location"), new HashMap<String, Object>().getClass()));
+			UUID owner = UUID.fromString(res.getString("owner"));
+			@SuppressWarnings("unchecked")
+			Map<String, Object> map = gson.fromJson(res.getString("icon"), new HashMap<String, Object>().getClass());
+			boolean isLocal = false;
+			switch (res.getString("type")) {
+			case "LOCAL":
+				isLocal = true;
+				break;
+			case "GLOBAL":
+				isLocal = false;
+				break;
 
+			}
+			ItemStack icon = ItemStack.deserialize(map);
+			tag = new MapTag(id, name, lore, owner, loc, icon, isLocal);
+			return tag;
 		} catch (SQLException e) {
+			// TODO Автоматически созданный блок catch
 			e.printStackTrace();
 		}
-			
-		}
-		
-	});
-}
-public MapTag getMapTag(String identificator) {
-	Statement statement;
-	ResultSet result = null;
-	try {
-		statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-	    result = statement.executeQuery("SELECT * FROM maptags WHERE id='"+identificator+"'");
-	    
-} catch (SQLException e) {
-	e.printStackTrace();
-	
-}
-	return buildTag(result);
-}	
-public void editMapTag(String id,String key,String object) {
-	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-		@Override
-		public void run() {
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("UPDATE maptags SET "+key+"='"+object+"'");
-			} catch (SQLException e) {
-				// TODO Автоматически созданный блок catch
-				e.printStackTrace();
-			}
-		}
-		
-	});
-	
-}
-private MapTag buildTag(ResultSet res) {
-	Gson gson = new Gson();
-	MapTag tag = null;
-	String id;
-	try {		
-		id = res.getString("id");
-		@SuppressWarnings("unchecked")
-		List<String> lore = gson.fromJson(res.getString("lore"), new ArrayList<String>().getClass());
-		String name = res.getString("name");
-		@SuppressWarnings("unchecked")
-		Location loc = Location.deserialize(
-				gson.fromJson(res.getString("location"), new HashMap<String, Object>().getClass()));
-		UUID owner = UUID.fromString(res.getString("owner"));
-		@SuppressWarnings("unchecked")
-		Map<String, Object> map = gson.fromJson(res.getString("icon"),
-				new HashMap<String, Object>().getClass());
-		boolean isLocal = false;
-		switch(res.getString("type")) {
-		case "LOCAL":
-			isLocal = true;
-			break;
-		case "GLOBAL":
-			isLocal = false;
-			break;
-		
-		}
-		ItemStack icon = ItemStack.deserialize(map);
-		tag = new MapTag(id,name,lore,owner,loc,icon,isLocal);
 		return tag;
-	} catch (SQLException e) {
-		// TODO Автоматически созданный блок catch
-		e.printStackTrace();
+
 	}
-	return tag;
-
-}
-
 
 }

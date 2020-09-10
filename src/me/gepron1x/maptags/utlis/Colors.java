@@ -13,6 +13,7 @@ public class Colors {
 	public static String paint(String s) {
 		return ChatColor.translateAlternateColorCodes('&', s);
 	}
+
 	public static List<String> stringAsList(String lore) {
 		lore = paint(lore.replace('_', ' '));
 		List<String> lorear = new ArrayList<String>();

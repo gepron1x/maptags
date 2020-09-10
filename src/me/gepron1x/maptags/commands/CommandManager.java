@@ -49,8 +49,8 @@ public class CommandManager implements CommandExecutor {
 			case "help":
 				throwHelp(sender);
 			default:
-			   throwInfo(sender);
-			   break;
+				throwInfo(sender);
+				break;
 			}
 			return true;
 		} else {
@@ -60,16 +60,16 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	private void throwHelp(CommandSender sender) {
-     for(String msg : main.getMessages().getStringList("command.help")) {
-    	 sender.sendMessage(Colors.paint(msg));
-     }
+		for (String msg : main.getMessages().getStringList("command.help")) {
+			sender.sendMessage(Colors.paint(msg));
+		}
 
 	}
 
 	private void throwInfo(CommandSender sender) {
-		for(String msg : main.getMessages().getStringList("command.help")) {
-	    	 sender.sendMessage(Colors.paint(msg));
-	     }
+		for (String msg : main.getMessages().getStringList("command.help")) {
+			sender.sendMessage(Colors.paint(msg));
+		}
 	}
 
 	private void createCommand(CommandSender sender, String[] args) {
@@ -141,7 +141,7 @@ public class CommandManager implements CommandExecutor {
 				String name = Colors.buildName(args[3]);
 				tag.setName(name);
 				object = name;
-                  
+
 				break;
 			case "lore":
 				String lore = args[3];
@@ -151,9 +151,9 @@ public class CommandManager implements CommandExecutor {
 				break;
 			case "location":
 				Location location = p.getLocation();
-					tag.setLocation(location);
-					object = gson.toJson(location.serialize());
-				case "icon":
+				tag.setLocation(location);
+				object = gson.toJson(location.serialize());
+			case "icon":
 				ItemStack is = Colors.buildIcon(p.getInventory().getItemInMainHand());
 				tag.setIcon(is);
 				object = gson.toJson(is.serialize());
@@ -162,7 +162,7 @@ public class CommandManager implements CommandExecutor {
 				sender.sendMessage("Извини, но такого параметра не существует :)");
 				return;
 			}
-				main.getGlobalList().set(index, tag);
+			main.getGlobalList().set(index, tag);
 			main.getMySQL().editMapTag(tag.getId(), args[2], object);
 
 		} else {
@@ -170,6 +170,5 @@ public class CommandManager implements CommandExecutor {
 		}
 
 	}
-
 
 }
