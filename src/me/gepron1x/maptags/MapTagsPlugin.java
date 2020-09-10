@@ -2,18 +2,17 @@ package me.gepron1x.maptags;
 
 import java.io.File;
 
+
 import me.gepron1x.maptags.utlis.MySQLWorker;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -23,6 +22,7 @@ import com.google.common.base.Charsets;
 import me.gepron1x.maptags.commands.CommandManager;
 import me.gepron1x.maptags.events.InventoryListener;
 import me.gepron1x.maptags.events.WaypointsListener;
+import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.MapTag;
 
 public class MapTagsPlugin extends JavaPlugin {
@@ -82,13 +82,7 @@ public class MapTagsPlugin extends JavaPlugin {
 			return;
 		}
 		ItemStack e = p.getInventory().getItemInMainHand();
-		if (e == null || e.getType() == Material.AIR)
-			e = new ItemStack(Material.BEDROCK);
-		
-		lore = lore.replace('_', ' ');
-		name = name.replace('_', ' ');
-		
-		MapTag tag = new MapTag(id, name, getLoreAsList(lore), p.getUniqueId(), p.getLocation(), e,isLocal);
+		MapTag tag = new MapTag(id, Colors.buildName(name), Colors.stringAsList(lore), p.getUniqueId(), p.getLocation(), Colors.buildIcon(e),isLocal);
 	    maptags.add(tag);
 		mySQL.createMapTag(tag);
 	}
@@ -102,6 +96,7 @@ public boolean removeTag(String id, Player executor) {
 	 } 
 	 
 	 getGlobalList().remove(tag);
+	 getMySQL().deleteTag(tag.getId());
 	 
 	 return true;
 	
@@ -151,7 +146,6 @@ public boolean removeTag(String id, Player executor) {
 	}
 public List<MapTag> getLocalList(UUID player) {
 	List<String> perms = getMySQL().getPlayerPermissionsAsList(player);
-	
 	List<MapTag> local = maptags.stream().
 			filter(marker -> true == marker.getIsLocal()).
 			collect(Collectors.toList());
@@ -177,14 +171,4 @@ public List<MapTag> getLocalList(UUID player) {
  public WaypointsListener getWaypoints() {
 	 return this.waypoints;
  }
-public static List<String> getLoreAsList(String lore) {
-	List<String> lorear = new ArrayList<String>();
-	if (lore.split(";").length != 1) {
-		lorear = Arrays.asList(lore.split(";"));
-	} else {
-		List<String> to = new ArrayList<String>();
-		lorear = to;
-	}
-	return lorear;
-}
 }

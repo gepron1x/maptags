@@ -2,7 +2,6 @@ package me.gepron1x.maptags.commands;
 
 import java.util.List;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -47,6 +46,11 @@ public class CommandManager implements CommandExecutor {
 			case "edit":
 				editCommand(sender, args);
 				break;
+			case "help":
+				throwHelp(sender);
+			default:
+			   throwInfo(sender);
+			   break;
 			}
 			return true;
 		} else {
@@ -56,12 +60,16 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	private void throwHelp(CommandSender sender) {
-		// TODO Auto-generated method stub
+     for(String msg : main.getMessages().getStringList("command.help")) {
+    	 sender.sendMessage(Colors.paint(msg));
+     }
 
 	}
 
 	private void throwInfo(CommandSender sender) {
-
+		for(String msg : main.getMessages().getStringList("command.help")) {
+	    	 sender.sendMessage(Colors.paint(msg));
+	     }
 	}
 
 	private void createCommand(CommandSender sender, String[] args) {
@@ -118,14 +126,9 @@ public class CommandManager implements CommandExecutor {
 
 	private void editCommand(CommandSender sender, String[] args) {
 		Gson gson = new Gson();
-		boolean isLocal = false;
 		String object = "";
 		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equalsIgnoreCase(marker.getId()) == true)
 				.findAny().orElse(null);
-		if (tag == null) {
-			tag = main.getMySQL().getMapTag(args[1]);
-			isLocal = true;
-		}
 		if (tag == null) {
 			sender.sendMessage("Извини, но такой метки не существует. :)");
 			return;
@@ -135,22 +138,23 @@ public class CommandManager implements CommandExecutor {
 		if (tag.getOwner().equals(p.getUniqueId())) {
 			switch (args[2]) {
 			case "name":
-				tag.setName(args[3]);
-				object = args[3];
-
+				String name = Colors.buildName(args[3]);
+				tag.setName(name);
+				object = name;
+                  
 				break;
 			case "lore":
-				String lore = args[3].replace('_', ' ');
-				List<String> loredump = MapTagsPlugin.getLoreAsList(lore);
+				String lore = args[3];
+				List<String> loredump = Colors.stringAsList(lore);
 				tag.setLore(loredump);
 				object = gson.toJson(loredump);
 				break;
 			case "location":
 				Location location = p.getLocation();
-				tag.setLocation(location);
-				object = gson.toJson(location.serialize());
-			case "icon":
-				ItemStack is = p.getInventory().getItemInMainHand();
+					tag.setLocation(location);
+					object = gson.toJson(location.serialize());
+				case "icon":
+				ItemStack is = Colors.buildIcon(p.getInventory().getItemInMainHand());
 				tag.setIcon(is);
 				object = gson.toJson(is.serialize());
 				break;
@@ -158,11 +162,11 @@ public class CommandManager implements CommandExecutor {
 				sender.sendMessage("Извини, но такого параметра не существует :)");
 				return;
 			}
-			if (isLocal == false) {
 				main.getGlobalList().set(index, tag);
-			}
 			main.getMySQL().editMapTag(tag.getId(), args[2], object);
 
+		} else {
+			sender.sendMessage("Вам нельзя редактировать чужие метки!");
 		}
 
 	}

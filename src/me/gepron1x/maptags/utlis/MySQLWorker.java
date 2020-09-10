@@ -1,6 +1,7 @@
 package me.gepron1x.maptags.utlis;
 
 import java.sql.Connection;
+
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import me.gepron1x.maptags.MapTagsPlugin;
 
@@ -282,7 +282,6 @@ public void removePermission(final UUID player,final String id) {
 }
 public MapTag getMapTag(String identificator) {
 	Statement statement;
-	MapTag tag = null;
 	ResultSet result = null;
 	try {
 		statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
