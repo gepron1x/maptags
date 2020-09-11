@@ -1,14 +1,13 @@
 package me.gepron1x.maptags.utlis;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class Colors {
 	
@@ -44,15 +43,7 @@ public class Colors {
 		return result;
 		
 	}
-  public static ItemStack buildItemStackFromConfig(FileConfiguration cfg,String path) {
-	  ItemStack e = new ItemStack(Material.getMaterial(cfg.getString(path+".material")),cfg.getInt(path+".amount"));
-	  ItemMeta meta = e.getItemMeta();
-	  meta.setDisplayName(paint(cfg.getString(path+".name")));
-	  meta.setLore(paintList(cfg.getStringList(path+".lore")));
-	  e.setItemMeta(meta);
-	return e;
-	  
-  }
+ 
 	
 
 }

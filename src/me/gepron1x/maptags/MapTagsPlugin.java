@@ -33,18 +33,18 @@ public class MapTagsPlugin extends JavaPlugin {
 	private File msgFile = new File(getDataFolder(), "messages.yml");
 	private FileConfiguration messages;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
-
+    private CommandManager manager;
 	public void onEnable() {
 		instance = this;
 		this.saveDefaultConfig();
 		waypoints = new WaypointsListener();
-
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		saveCustomDefaultConfig();
 		saveDefaultMessages();
-		getCommand("maptag").setExecutor(new CommandManager());
+		manager = new CommandManager();
+		getCommand("maptag").setExecutor(manager);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		getServer().getPluginManager().registerEvents(waypoints, this);
 		send("&aPlugin enabled!");
@@ -176,5 +176,10 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
  public void editTag(MapTag tag,int i) {
 	 maptags.set(i, tag);
+ }
+ public void reload() {
+	 this.reloadConfig();
+	 this.reloadMessages();
+	 this.manager.reloadMessages();
  }
 }

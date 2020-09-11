@@ -1,20 +1,20 @@
 package me.gepron1x.maptags.events;
 
 import org.bukkit.Bukkit;
+
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
 import me.gepron1x.maptags.utlis.MainGUI;
 import me.gepron1x.maptags.utlis.MapTag;
-import net.md_5.bungee.api.ChatColor;
 
 public class InventoryListener implements Listener {
 
@@ -37,7 +37,7 @@ public class InventoryListener implements Listener {
 
 						@Override
 						public void run() {
-							inv.setItem(46, new ItemStack(Material.ARROW));
+							inv.setItem(46, gui.getPrevious());
 						}
 					}, 20);
 					return;
@@ -56,7 +56,7 @@ public class InventoryListener implements Listener {
 
 						@Override
 						public void run() {
-							inv.setItem(52, new ItemStack(Material.ARROW));
+							inv.setItem(52, gui.getNext());
 
 						}
 
@@ -75,11 +75,8 @@ public class InventoryListener implements Listener {
 				final Inventory inv = e.getClickedInventory();
 				MapTag tag = gui.getClickedTag(is);
 				main.getWaypoints().addWayPoint((Player) e.getWhoClicked(), tag);
-				ItemStack selected = new ItemStack(Material.STRUCTURE_VOID);
-				ItemMeta meta = selected.getItemMeta();
-				meta.setDisplayName(ChatColor.AQUA + "Метка успешно выбрана!");
-				selected.setItemMeta(meta);
-				e.getClickedInventory().setItem(e.getSlot(), selected);
+				e.getClickedInventory().setItem(e.getSlot(), gui.getSelected());
+				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 10, 1);
 				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
 
 					@Override

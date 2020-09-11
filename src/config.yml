@@ -3,3 +3,29 @@ mysql:
   database: maptags
   username: root
   password: 'ggggggggg'
+gui:
+  nopage:
+    material: BARRIER
+    amount: 1
+    name: '&6Такой метки не существует!'
+    lore:
+    - ''
+  nextPage:
+    material: ARROW
+    amount: 1
+    name: '&6Следующая страница'
+    lore:
+    - ''
+  previousPage:
+    material: ARROW
+    amount: 1
+    name: '&Предыдущая страница'
+    lore: 
+    - ''
+  selected:
+    material: STRUCTURE_VOID
+    amount: 1
+    name: '&3Метка успешно выбрана!'
+    lore: 
+    - ''
+    

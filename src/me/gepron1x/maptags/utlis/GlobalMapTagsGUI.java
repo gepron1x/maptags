@@ -1,20 +1,22 @@
 package me.gepron1x.maptags.utlis;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class GlobalMapTagsGUI implements InventoryHolder {
+import me.gepron1x.maptags.MapTagsPlugin;
 
+public class GlobalMapTagsGUI implements InventoryHolder {
+    private MapTagsPlugin main;
 	private List<Inventory> pages;
 	Map<ItemStack,MapTag> clickables;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
@@ -24,18 +26,16 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	private Inventory openedPage;
 	private ItemStack nopage;
 	private String title;
-    private ItemStack nextpage;
+    private ItemStack nextPage;
     private ItemStack previousPage;
     private ItemStack selected;
 	public GlobalMapTagsGUI(List<MapTag> items,String title) {
+		main = MapTagsPlugin.getInstance();
+		updateSetup();
 		this.maptags = items;
 		this.clickables = new HashMap<ItemStack,MapTag>();
 		this.title = title;
 		this.pages = new ArrayList<Inventory>();
-		this.nopage = new ItemStack(Material.BARRIER);
-		ItemMeta meta = nopage.getItemMeta();
-		meta.setDisplayName(ChatColor.RED + "Следующей страницы нет!");
-		nopage.setItemMeta(meta);
 		build();
 	}
 
@@ -55,17 +55,17 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 			clickables.put(ist, tag);
 			lastslot++;
 			if (lastslot == 45) {
-				inv.setItem(46, new ItemStack(Material.ARROW));
-				inv.setItem(52, new ItemStack(Material.ARROW));
+				inv.setItem(46, previousPage);
+				inv.setItem(52, nextPage);
 				pages.add(inv);
 				lastpage++;
 				i = lastpage+1;
-				inv = Bukkit.createInventory(this, 6 * 9, title + i);
+				inv = Bukkit.createInventory(this, 6 * 9, title.replace("%page%", pg.toString()));
 				lastslot = 0;
 			}
 		}
-		inv.setItem(46, new ItemStack(Material.ARROW));
-		inv.setItem(52, new ItemStack(Material.ARROW));
+		inv.setItem(46, previousPage);
+		inv.setItem(52, nextPage);
 		pages.add(inv);
 	}
 
@@ -92,8 +92,33 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	public ItemStack getNoPage() {
 		return nopage;
 	}
+	public ItemStack getSelected() {
+		return selected;
+	}
+	public ItemStack getPrevious() {
+		return previousPage;
+	}
+	public ItemStack getNext() {
+		return nextPage;
+	}
 public MapTag getClickedTag(ItemStack icon) {
 	return clickables.get(icon);
 	
     }
+
+public void updateSetup() {
+	this.nopage = buildItemStackFromConfig("gui.list.nopage");
+	this.nextPage = buildItemStackFromConfig("gui.list.nextPage");
+	this.previousPage = buildItemStackFromConfig("gui.list.previousPage");
+	this.selected = buildItemStackFromConfig("gui.list.selected");
+}
+public ItemStack buildItemStackFromConfig(String path) {
+	  ItemStack e = new ItemStack(Material.getMaterial(main.getConfig().getString(path+".material")),main.getConfig().getInt(path+".amount"));
+	  ItemMeta meta = e.getItemMeta();
+	  meta.setDisplayName(Colors.paint(main.getConfig().getString(path+".name")));
+	  meta.setLore(Colors.paintList(main.getConfig().getStringList(path+".lore")));
+	  e.setItemMeta(meta);
+	return e;
+	  
+}
 }

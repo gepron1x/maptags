@@ -3,6 +3,8 @@ package me.gepron1x.maptags.events;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,6 +47,13 @@ public class WaypointsListener implements Listener {
 
 	public void addWayPoint(Player p, MapTag tag) {
 		waypoints.put(p.getUniqueId(), tag);
+		 /*ArmorStand as = (ArmorStand) p.getLocation().getWorld().spawnEntity(p.getLocation(), EntityType.ARMOR_STAND);
+         as.remove();
+         as.setGravity(false);
+         as.setCanPickupItems(false);
+         as.setCustomName(Utils.Chat("&e&lSTATS"));
+         as.setCustomNameVisible(true);
+         as.setVisible(false);*/
 	}
 
 	public void removeWayPoint(Player p) {

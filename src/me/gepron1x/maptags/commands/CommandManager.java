@@ -27,7 +27,9 @@ public class CommandManager implements CommandExecutor {
 	String unselected;
 	String notOwner;
 	String playeronly;
-
+     public CommandManager() {
+    	 reloadMessages();
+     }
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
 		if (args.length == 0)
@@ -60,6 +62,9 @@ public class CommandManager implements CommandExecutor {
 					sender.sendMessage(tag.getId());
 				}
 				sender.sendMessage(main.getMessages().getString("command.player-only"));
+				break;
+			case "reload":
+				main.reload();
 			default:
 				throwInfo(sender);
 				break;
