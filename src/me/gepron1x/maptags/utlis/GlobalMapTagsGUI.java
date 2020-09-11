@@ -24,7 +24,9 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	private Inventory openedPage;
 	private ItemStack nopage;
 	private String title;
-
+    private ItemStack nextpage;
+    private ItemStack previousPage;
+    private ItemStack selected;
 	public GlobalMapTagsGUI(List<MapTag> items,String title) {
 		this.maptags = items;
 		this.clickables = new HashMap<ItemStack,MapTag>();
@@ -44,7 +46,8 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 
 	private void build() {
 		int i = lastpage+1;
-		Inventory inv = Bukkit.createInventory(this, 6 * 9, title + i);
+		Integer pg = i;
+		Inventory inv = Bukkit.createInventory(this, 6 * 9, title.replace("%page%", pg.toString()));
 		pages.clear();
 		for (MapTag tag : maptags) {
 			ItemStack ist = tag.toItemStack();

@@ -76,7 +76,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void addTag(String id, String name, String lore, Player p, boolean isLocal) {
-		if (getGlobalList().stream().anyMatch(marker -> id.equalsIgnoreCase(marker.getId())) == true) {
+		if (maptags.stream().anyMatch(marker -> id.equalsIgnoreCase(marker.getId())) == true) {
 			p.sendMessage("Метка с этим айди уже существует!");
 			return;
 		}
@@ -88,7 +88,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public boolean removeTag(String id, Player executor) {
-		MapTag tag = getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId()) == true).findAny()
+		MapTag tag = maptags.stream().filter(marker -> id.equalsIgnoreCase(marker.getId()) == true).findAny()
 				.orElse(null);
 		if (tag == null)
 			return false;
@@ -97,7 +97,7 @@ public class MapTagsPlugin extends JavaPlugin {
 			return false;
 		}
 
-		getGlobalList().remove(tag);
+		maptags.remove(tag);
 		getMySQL().deleteTag(tag.getId());
 
 		return true;
@@ -174,4 +174,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	public WaypointsListener getWaypoints() {
 		return this.waypoints;
 	}
+ public void editTag(MapTag tag,int i) {
+	 maptags.set(i, tag);
+ }
 }

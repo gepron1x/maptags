@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import com.google.gson.Gson;
@@ -42,7 +43,7 @@ public class MapTag {
 		// ItemStack result = this.icon;
 		List<String> loredump = new ArrayList<String>();
 		loredump.addAll(lore);
-		ItemStack result = new ItemStack(this.icon.getType(), 1);
+		ItemStack result = icon;
 		ItemMeta meta = result.getItemMeta();
 		meta.setDisplayName(name);
 		loredump.add(Colors.paint("&fМир: " + location.getWorld().getName()));
@@ -50,7 +51,8 @@ public class MapTag {
 		int y = (int) location.getY();
 		int z = (int) location.getZ();
 		loredump.add(Colors.paint("&f" + x + " " + y + " " + z));
-		loredump.add(Colors.paint("&fВладелец: " + Bukkit.getPlayer(owner).getDisplayName()));
+		loredump.add(Colors.paint("&fВладелец: " + getPlayerName(owner)));
+		loredump.add("id: "+getId());
 		meta.setLore(loredump);
 		result.setItemMeta(meta);
 		return result;
@@ -100,5 +102,16 @@ public class MapTag {
 
 	public boolean getIsLocal() {
 		return isLocal;
+	}
+	private String getPlayerName(UUID player) {
+		String nick = "";
+		Player p = Bukkit.getPlayer(player);
+		if(p == null) {
+			nick = Bukkit.getOfflinePlayer(player).getName();
+			
+		} else {
+			nick = p.getDisplayName();
+		}
+		return nick;
 	}
 }

@@ -20,6 +20,13 @@ import me.gepron1x.maptags.utlis.MapTag;
 public class CommandManager implements CommandExecutor {
 
 	public MapTagsPlugin main = MapTagsPlugin.getInstance();
+	String created;
+	String removed;
+	String shared;
+	String unshared;
+	String unselected;
+	String notOwner;
+	String playeronly;
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -48,13 +55,18 @@ public class CommandManager implements CommandExecutor {
 				break;
 			case "help":
 				throwHelp(sender);
+			case "debug":
+				for(MapTag tag : main.getGlobalList()) {
+					sender.sendMessage(tag.getId());
+				}
+				sender.sendMessage(main.getMessages().getString("command.player-only"));
 			default:
 				throwInfo(sender);
 				break;
 			}
 			return true;
 		} else {
-			sender.sendMessage(Colors.paint(main.getMessages().getString("command.players-only")));
+			sender.sendMessage(playeronly);
 		}
 		return true;
 	}
@@ -67,7 +79,7 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	private void throwInfo(CommandSender sender) {
-		for (String msg : main.getMessages().getStringList("command.help")) {
+		for (String msg : main.getMessages().getStringList("command.info")) {
 			sender.sendMessage(Colors.paint(msg));
 		}
 	}
@@ -79,19 +91,19 @@ public class CommandManager implements CommandExecutor {
 		if (args[4].equalsIgnoreCase("local"))
 			isLocal = true;
 		main.addTag(args[1], args[2], args[3], p, isLocal);
-
+        sender.sendMessage(this.created.replace("%name%", Colors.paint(args[2])));
 	}
 
 	private void removeCommand(CommandSender sender, String[] args) {
 		boolean isOk = main.removeTag(args[1], (Player) sender);
 		if (isOk == true)
-			sender.sendMessage("Метка успешно удалена.");
+			sender.sendMessage(removed);
 	}
 
 	private void listCommand(CommandSender sender, String[] args) {
 		GlobalMapTagsGUI gui;
 		Player p = (Player) sender;
-		if (args[1].equalsIgnoreCase("local")) {
+		if (args.length == 2  && args[1].equalsIgnoreCase("local")) {
 			gui = new GlobalMapTagsGUI(main.getLocalList(p.getUniqueId()), "Локальные метки №");
 
 		} else {
@@ -101,8 +113,12 @@ public class CommandManager implements CommandExecutor {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private void shareCommand(CommandSender sender, String[] args) {
 		UUID playertoshare = Bukkit.getPlayer(args[1]).getUniqueId();
+		if(playertoshare == null) {
+			playertoshare = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+		}
 		Player p = (Player) sender;
 		String id = args[2];
 		MapTag tag = main.getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId())).findAny()
@@ -113,7 +129,7 @@ public class CommandManager implements CommandExecutor {
 		}
 
 		if (!tag.getOwner().equals(p.getUniqueId())) {
-			sender.sendMessage("Это не ваша метка!");
+			sender.sendMessage(notOwner);
 			return;
 		}
 		;
@@ -127,7 +143,7 @@ public class CommandManager implements CommandExecutor {
 	private void editCommand(CommandSender sender, String[] args) {
 		Gson gson = new Gson();
 		String object = "";
-		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equalsIgnoreCase(marker.getId()) == true)
+		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equals(marker.getId()))
 				.findAny().orElse(null);
 		if (tag == null) {
 			sender.sendMessage("Извини, но такой метки не существует. :)");
@@ -162,13 +178,22 @@ public class CommandManager implements CommandExecutor {
 				sender.sendMessage("Извини, но такого параметра не существует :)");
 				return;
 			}
-			main.getGlobalList().set(index, tag);
+		    main.editTag(tag, index);
 			main.getMySQL().editMapTag(tag.getId(), args[2], object);
 
 		} else {
-			sender.sendMessage("Вам нельзя редактировать чужие метки!");
+			sender.sendMessage(notOwner);
 		}
 
 	}
+public void reloadMessages() {
+	this.playeronly = Colors.paint(main.getMessages().getString("command.player-only"));
+	this.notOwner = Colors.paint(main.getMessages().getString("command.notowner"));
+	this.created = Colors.paint(main.getMessages().getString("command.created"));
+	this.removed = Colors.paint(main.getMessages().getString("command.removed"));
+	this.shared = Colors.paint(main.getMessages().getString("command.shared"));
+	this.unshared = Colors.paint(main.getMessages().getString("command.unshared"));
+	this.unselected = Colors.paint(main.getMessages().getString("command.unselected"));
+}
 
 }
