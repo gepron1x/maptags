@@ -1,6 +1,7 @@
 package me.gepron1x.maptags.utlis;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -10,7 +11,9 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 
 public class ASHologram {
@@ -67,13 +70,16 @@ public class ASHologram {
   }
  public void changeName(String name) {
 	   PacketContainer handle2 = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+	   WrappedChatComponent wrappedChatComponent = WrappedChatComponent.fromText(name);
+	   WrappedDataWatcher metadata = new WrappedDataWatcher();
+	   Optional<?> opt = Optional
+               .of(WrappedChatComponent
+                       .fromChatMessage(name)[0].getHandle());
+	   
+       metadata.setObject(new WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), opt);
+       
        handle2.getIntegers().write(0, entityID);
-       WrappedDataWatcher dataWatcher = new WrappedDataWatcher(handle2.getWatchableCollectionModifier().read(0));
-       WrappedDataWatcher.WrappedDataWatcherObject nameValue = new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.get(String.class));
-       WrappedDataWatcher.WrappedDataWatcherObject nameVisible = new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class));
-       dataWatcher.setObject(nameValue, name);
-       dataWatcher.setObject(nameVisible, true);
-       handle2.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
+       handle2.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
        try {
            ProtocolLibrary.getProtocolManager().sendServerPacket(handler, handle2);
        } catch (InvocationTargetException e) {
