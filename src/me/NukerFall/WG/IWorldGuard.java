@@ -1,5 +1,7 @@
 package me.NukerFall.WG;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.entity.Player;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
@@ -23,6 +25,21 @@ public class IWorldGuard {
 			return false;
 		} else {
 			return true;
+		}
+	}
+	
+	public List<String> getRegions(Player p) {
+		LocalPlayer pl = wg.wrapPlayer(p);
+		manager = rc.get(pl.getWorld());
+		ApplicableRegionSet regions = manager.getApplicableRegions(pl.getLocation().toVector().toBlockPoint());
+		if (regions.size() == 0) {
+			List<String> names = new ArrayList<String>();
+			for (ProtectedRegion reg : regions.getRegions()) {
+				names.add(reg.getId());
+			}
+			return names;
+		} else {
+			return null;
 		}
 	}
 
