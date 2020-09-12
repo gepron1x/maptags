@@ -100,7 +100,7 @@ public class MapTagsPlugin extends JavaPlugin {
 				.orElse(null);
 		if (tag == null)
 			return false;
-		if (tag.getOwner() != executor.getUniqueId()) {
+		if (!tag.getOwner().equals(executor.getUniqueId())) {
 			executor.sendMessage(nopermission);
 			return false;
 		}
