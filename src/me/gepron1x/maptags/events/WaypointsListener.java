@@ -1,6 +1,7 @@
 package me.gepron1x.maptags.events;
 
 import java.util.HashMap;
+
 import java.util.UUID;
 
 import org.bukkit.entity.ArmorStand;
@@ -10,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.MapTag;
 import net.md_5.bungee.api.ChatMessageType;
@@ -18,12 +20,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class WaypointsListener implements Listener {
 	private String actionbar;
 	private String reached;
+	private String notselected;
 	private HashMap<UUID, MapTag> waypoints;
-
+    MapTagsPlugin main;
 	public WaypointsListener() {
-		this.waypoints = new HashMap<UUID, MapTag>();
-		this.actionbar = "Расстояние до метки \"%maptag%\": %distance%"; // MapTagsPlugin.getInstance().getMessages().getString("waypoints.actionbar");
-		this.reached = "Вы успешно дошли до метки.";// MapTagsPlugin.getInstance().getMessages().getString("waypoints.reached");
+		waypoints = new HashMap<UUID, MapTag>();
+		main = MapTagsPlugin.getInstance();
+		reloadMessages();
 
 	}
 
@@ -58,10 +61,15 @@ public class WaypointsListener implements Listener {
 
 	public void removeWayPoint(Player p) {
 		if (waypoints.get(p.getUniqueId()) == null) {
-			p.sendMessage(Colors.paint("&cВы не выбрали метку!"));
+			p.sendMessage(notselected);
 			return;
 		}
 		waypoints.remove(p.getUniqueId());
+	}
+	public void reloadMessages() {
+		this.notselected = Colors.paint(main.getMessages().getString("waypoints.notselected"));
+		this.actionbar =Colors.paint(main.getMessages().getString("waypoints.actionbar"));
+		this.reached = Colors.paint(main.getMessages().getString("waypoints.reached"));
 	}
 
 }

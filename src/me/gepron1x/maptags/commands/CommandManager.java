@@ -1,5 +1,6 @@
 package me.gepron1x.maptags.commands;
 
+
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -20,15 +21,12 @@ import me.gepron1x.maptags.utlis.MapTag;
 public class CommandManager implements CommandExecutor {
 
 	public MapTagsPlugin main = MapTagsPlugin.getInstance();
-	String created;
-	String removed;
-	String shared;
-	String unshared;
-	String unselected;
-	String notOwner;
-	String playeronly;
+	private String shared,unshared,unselected,notOwner,playeronly,tagnotexists;
+	
      public CommandManager() {
+    	 
     	 reloadMessages();
+    	 
      }
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -51,6 +49,7 @@ public class CommandManager implements CommandExecutor {
 				break;
 			case "unselect":
 				main.getWaypoints().removeWayPoint((Player) sender);
+				sender.sendMessage(unselected);
 				break;
 			case "edit":
 				editCommand(sender, args);
@@ -96,23 +95,20 @@ public class CommandManager implements CommandExecutor {
 		if (args[4].equalsIgnoreCase("local"))
 			isLocal = true;
 		main.addTag(args[1], args[2], args[3], p, isLocal);
-        sender.sendMessage(this.created.replace("%name%", Colors.paint(args[2])));
+        
 	}
 
 	private void removeCommand(CommandSender sender, String[] args) {
-		boolean isOk = main.removeTag(args[1], (Player) sender);
-		if (isOk == true)
-			sender.sendMessage(removed);
+	main.removeTag(args[1], (Player) sender);
 	}
-
 	private void listCommand(CommandSender sender, String[] args) {
 		GlobalMapTagsGUI gui;
 		Player p = (Player) sender;
 		if (args.length == 2  && args[1].equalsIgnoreCase("local")) {
-			gui = new GlobalMapTagsGUI(main.getLocalList(p.getUniqueId()), "Локальные метки №");
+			gui = new GlobalMapTagsGUI(main.getLocalList(p.getUniqueId()), main.getConfig().getString("gui.list.title.local"));
 
 		} else {
-			gui = new GlobalMapTagsGUI(main.getGlobalList(), "Глобальные метки №");
+			gui = new GlobalMapTagsGUI(main.getGlobalList(), main.getConfig().getString("gui.list.title.global"));
 		}
 		p.openInventory(gui.getInventory());
 
@@ -120,16 +116,19 @@ public class CommandManager implements CommandExecutor {
 
 	@SuppressWarnings("deprecation")
 	private void shareCommand(CommandSender sender, String[] args) {
-		UUID playertoshare = Bukkit.getPlayer(args[1]).getUniqueId();
-		if(playertoshare == null) {
+		Player pl = Bukkit.getPlayer(args[1]);
+		UUID playertoshare;
+		if(pl == null) {
 			playertoshare = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+		} else {
+			playertoshare = pl.getUniqueId();
 		}
 		Player p = (Player) sender;
 		String id = args[2];
 		MapTag tag = main.getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId())).findAny()
 				.orElse(null);
 		if (tag == null) {
-			sender.sendMessage("Такой метки либо не существует, либо она глобальная.");
+			sender.sendMessage(tagnotexists);
 			return;
 		}
 
@@ -140,8 +139,10 @@ public class CommandManager implements CommandExecutor {
 		;
 		if (args[0].equalsIgnoreCase("share")) {
 			main.getMySQL().setPlayerPermission(playertoshare, id);
+			if(pl != null) pl.sendMessage(shared);
 		} else if (args[0].equalsIgnoreCase("unshare")) {
 			main.getMySQL().removePermission(playertoshare, id);
+			if(pl != null) pl.sendMessage(unshared);
 		}
 	}
 
@@ -151,7 +152,7 @@ public class CommandManager implements CommandExecutor {
 		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equals(marker.getId()))
 				.findAny().orElse(null);
 		if (tag == null) {
-			sender.sendMessage("Извини, но такой метки не существует. :)");
+			sender.sendMessage(tagnotexists);
 			return;
 		}
 		Player p = (Player) sender;
@@ -180,11 +181,12 @@ public class CommandManager implements CommandExecutor {
 				object = gson.toJson(is.serialize());
 				break;
 			default:
-				sender.sendMessage("Извини, но такого параметра не существует :)");
+				sender.sendMessage(Colors.paint(main.getMessages().getString("command.edit.parameternotexists")));
 				return;
 			}
 		    main.editTag(tag, index);
 			main.getMySQL().editMapTag(tag.getId(), args[2], object);
+			sender.sendMessage(Colors.paint(main.getMessages().getString("command.edit."+args[2])).replace("%argument%", args[3]));
 
 		} else {
 			sender.sendMessage(notOwner);
@@ -194,11 +196,12 @@ public class CommandManager implements CommandExecutor {
 public void reloadMessages() {
 	this.playeronly = Colors.paint(main.getMessages().getString("command.player-only"));
 	this.notOwner = Colors.paint(main.getMessages().getString("command.notowner"));
-	this.created = Colors.paint(main.getMessages().getString("command.created"));
-	this.removed = Colors.paint(main.getMessages().getString("command.removed"));
 	this.shared = Colors.paint(main.getMessages().getString("command.shared"));
 	this.unshared = Colors.paint(main.getMessages().getString("command.unshared"));
 	this.unselected = Colors.paint(main.getMessages().getString("command.unselected"));
+	this.tagnotexists = Colors.paint(main.getMessages().getString("command.notexists"));
 }
+
+
 
 }

@@ -1,31 +1,34 @@
 mysql:
-  host: 127.0.0.1:3306
-  database: maptags
-  username: root
-  password: 'ggggggggg'
+  host: 145.239.88.2:3306
+  database: s1802_testdb
+  username: u1802_bQM41kpdVL
+  password: 'TV..agKoIwfq.rBsbrqMJ8zA'
 gui:
-  nopage:
-    material: BARRIER
-    amount: 1
-    name: '&6Такой метки не существует!'
-    lore:
-    - ''
-  nextPage:
-    material: ARROW
-    amount: 1
-    name: '&6Следующая страница'
-    lore:
-    - ''
-  previousPage:
-    material: ARROW
-    amount: 1
-    name: '&Предыдущая страница'
-    lore: 
-    - ''
-  selected:
-    material: STRUCTURE_VOID
-    amount: 1
-    name: '&3Метка успешно выбрана!'
-    lore: 
-    - ''
-    
+  list:
+    title:
+      local: 'Локальные метки №%page%'
+      global: 'Глобальные метки №%page%'
+    nopage:
+      material: BARRIER
+      amount: 1
+      name: '&cТакой метки не существует!'
+      lore:
+      - ''
+    nextPage:
+      material: ARROW
+      amount: 1
+      name: '&6Следующая страница'
+      lore:
+      - ''
+    previousPage:
+      material: ARROW
+      amount: 1
+      name: '&6Предыдущая страница'
+      lore: 
+      - ''
+    selected:
+      material: STRUCTURE_VOID
+      amount: 1
+      name: '&3Метка успешно выбрана!'
+      lore: 
+      - ''

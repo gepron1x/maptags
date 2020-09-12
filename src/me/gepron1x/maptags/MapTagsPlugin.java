@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.base.Charsets;
 import me.gepron1x.maptags.commands.CommandManager;
+import me.gepron1x.maptags.commands.TabCompleteManager;
 import me.gepron1x.maptags.events.InventoryListener;
 import me.gepron1x.maptags.events.WaypointsListener;
 import me.gepron1x.maptags.utlis.Colors;
@@ -34,19 +35,25 @@ public class MapTagsPlugin extends JavaPlugin {
 	private FileConfiguration messages;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
     private CommandManager manager;
+    private TabCompleteManager tabcompleter;
+    private String created,removed,exists,nopermission;
 	public void onEnable() {
 		instance = this;
 		this.saveDefaultConfig();
-		waypoints = new WaypointsListener();
+	
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		saveCustomDefaultConfig();
 		saveDefaultMessages();
 		manager = new CommandManager();
+		tabcompleter = new TabCompleteManager();
 		getCommand("maptag").setExecutor(manager);
+		getCommand("maptag").setTabCompleter(tabcompleter);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+		waypoints = new WaypointsListener();
 		getServer().getPluginManager().registerEvents(waypoints, this);
+		reloadMsgs();
 		send("&aPlugin enabled!");
 	}
 
@@ -77,7 +84,7 @@ public class MapTagsPlugin extends JavaPlugin {
 
 	public void addTag(String id, String name, String lore, Player p, boolean isLocal) {
 		if (maptags.stream().anyMatch(marker -> id.equalsIgnoreCase(marker.getId())) == true) {
-			p.sendMessage("Метка с этим айди уже существует!");
+			p.sendMessage(exists);
 			return;
 		}
 		ItemStack e = p.getInventory().getItemInMainHand();
@@ -85,6 +92,7 @@ public class MapTagsPlugin extends JavaPlugin {
 				Colors.buildIcon(e), isLocal);
 		maptags.add(tag);
 		mySQL.createMapTag(tag);
+		p.sendMessage(created.replace("%name%", Colors.paint(name)));
 	}
 
 	public boolean removeTag(String id, Player executor) {
@@ -93,13 +101,13 @@ public class MapTagsPlugin extends JavaPlugin {
 		if (tag == null)
 			return false;
 		if (tag.getOwner() != executor.getUniqueId()) {
-			executor.sendMessage("Вам нельзя удалять метки других игроков.");
+			executor.sendMessage(nopermission);
 			return false;
 		}
 
 		maptags.remove(tag);
 		getMySQL().deleteTag(tag.getId());
-
+        executor.sendMessage(removed);
 		return true;
 
 	}
@@ -175,11 +183,34 @@ public class MapTagsPlugin extends JavaPlugin {
 		return this.waypoints;
 	}
  public void editTag(MapTag tag,int i) {
+	 maptags.remove(i);
 	 maptags.set(i, tag);
+	 
+	 
  }
  public void reload() {
 	 this.reloadConfig();
 	 this.reloadMessages();
 	 this.manager.reloadMessages();
+	 this.waypoints.reloadMessages();
  }
+ public List<String> getPlayerTagsAsIds(Player p, boolean isLocal) {
+	 List<String> result = new ArrayList<>();
+	 
+	 List<MapTag> dump = maptags.stream().filter(marker -> p.getUniqueId().equals(marker.getOwner())).collect(Collectors.toList());
+	 if(isLocal == true) dump = dump.stream().filter(marker -> true == marker.getIsLocal()).collect(Collectors.toList());
+	 for(MapTag tag : dump) {
+		 result.add(tag.getId());
+	 }
+
+	 
+	return result;
+ }
+public void reloadMsgs() {
+	this.created = this.getMessages().getString("command.created");
+	this.removed = this.getMessages().getString("command.removed");
+	this.exists = this.getMessages().getString("command.alreadyexists");
+	this.nopermission = this.getMessages().getString("command.notowner");
+	
+}
 }
