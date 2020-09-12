@@ -46,10 +46,8 @@ public class MapTagsPlugin extends JavaPlugin {
 	private String created, removed, exists, nopermission, notinregion;
 	private IWorldGuard WGmanager;
 	private boolean isWGEnabled;
-	private ProtocolManager protocolManager;
 
 	public void onEnable() {
-		protocolManager = ProtocolLibrary.getProtocolManager();
 		instance = this;
 		this.saveDefaultConfig();
 		mySQL = new MySQLWorker();
@@ -57,6 +55,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		saveCustomDefaultConfig();
 		saveDefaultMessages();
+	
 		manager = new CommandManager();
 		tabcompleter = new TabCompleteManager();
 		setupWorldGuard();
@@ -65,8 +64,8 @@ public class MapTagsPlugin extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		waypoints = new WaypointsListener();
 		getServer().getPluginManager().registerEvents(waypoints, this);
-		reloadMsgs();
 		send("&aПлагин успешно загрузился, вроде бы :)");
+		reloadMsgs();
 	}
 
 	public void onDisable() {
@@ -232,7 +231,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void reloadMsgs() {
-		this.notinregion = Colors.paint(getMessages().getString("worldguard.not-in-own-region"));
+		this.notinregion = "текст";
 		this.created = Colors.paint(getMessages().getString("command.created"));
 		this.removed = Colors.paint(getMessages().getString("command.removed"));
 		this.exists = Colors.paint(getMessages().getString("command.alreadyexists"));

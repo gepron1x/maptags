@@ -194,7 +194,7 @@ public class CommandManager implements CommandExecutor {
 
 	}
 public void reloadMessages() {
-	this.notinownregion = Colors.paint(main.getMessages().getString("worldguard.not-in-own-region"));
+	this.notinownregion = "текст";//Colors.paint(main.getMessages().getString("worldguard.notInOwnRegion"));
 	this.playeronly = Colors.paint(main.getMessages().getString("command.player-only"));
 	this.notOwner = Colors.paint(main.getMessages().getString("command.notowner"));
 	this.shared = Colors.paint(main.getMessages().getString("command.shared"));

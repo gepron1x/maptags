@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import me.gepron1x.maptags.MapTagsPlugin;
+import me.gepron1x.maptags.utlis.ASHologram;
 import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.MapTag;
 import net.md_5.bungee.api.ChatMessageType;
@@ -17,9 +18,11 @@ public class WaypointsListener implements Listener {
 	private String reached;
 	private String notselected;
 	private HashMap<UUID, MapTag> waypoints;
+	private HashMap<Player,ASHologram> holos;
 	MapTagsPlugin main;
 
 	public WaypointsListener() {
+		holos = new HashMap<Player,ASHologram>();
 		waypoints = new HashMap<UUID, MapTag>();
 		main = MapTagsPlugin.getInstance();
 		reloadMessages();
@@ -29,14 +32,19 @@ public class WaypointsListener implements Listener {
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
 		Player p = e.getPlayer();
+		
 		MapTag tag = waypoints.get(p.getUniqueId());
-		if (tag == null)
+		ASHologram holo = holos.get(p);
+		
+		if (tag == null || holo == null)
 			return;
 		Integer distance = (int) p.getLocation().distance(tag.getLocation());
 
 		TextComponent text = new TextComponent(
 				actionbar.replace("%distance%", distance.toString()).replaceAll("%maptag%", tag.getName()));
 		p.spigot().sendMessage(ChatMessageType.ACTION_BAR, text);
+		holo.changeLocation();
+		holo.changeName("Локация етпа");
 		if (distance == 0) {
 			p.sendMessage(reached);
 			waypoints.remove(p.getUniqueId());
@@ -46,13 +54,12 @@ public class WaypointsListener implements Listener {
 
 	public void addWayPoint(Player p, MapTag tag) {
 		waypoints.put(p.getUniqueId(), tag);
-		/*
-		 * ArmorStand as = (ArmorStand)
-		 * p.getLocation().getWorld().spawnEntity(p.getLocation(),
-		 * EntityType.ARMOR_STAND); as.remove(); as.setGravity(false);
-		 * as.setCanPickupItems(false); as.setCustomName(Utils.Chat("&e&lSTATS"));
-		 * as.setCustomNameVisible(true); as.setVisible(false);
-		 */
+		ASHologram hologram = new ASHologram(p);
+		holos.put(p, hologram);
+		hologram.spawn();
+		hologram.changeName("Sex is dead");
+		
+		
 	}
 
 	public void removeWayPoint(Player p) {

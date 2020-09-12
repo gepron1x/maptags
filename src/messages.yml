@@ -32,4 +32,4 @@ waypoints:
   actionbar: '&6&lРасстояние до метки "%maptag%&6": %distance%'
   reached: '&aВы успешно дошли до метки.'
 worldguard:
-  not-in-own-region: '&cВы находитесь в чужом регионе!'
+  notInOwnRegion: '&cВы находитесь в чужом регионе!'
