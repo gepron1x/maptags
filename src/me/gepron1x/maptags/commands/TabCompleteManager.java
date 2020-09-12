@@ -46,6 +46,7 @@ public class TabCompleteManager implements TabCompleter {
 	    	  } 
 	    	  
 	      } else if(args.length <= 1 || args[0].equalsIgnoreCase("")) {
+	    	  
 	    	  result = subcommands;
 	    	  
 	      }

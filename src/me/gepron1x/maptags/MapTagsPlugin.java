@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.base.Charsets;
+
+import me.NukerFall.WG.IWorldGuard;
 import me.gepron1x.maptags.commands.CommandManager;
 import me.gepron1x.maptags.commands.TabCompleteManager;
 import me.gepron1x.maptags.events.InventoryListener;
@@ -36,11 +40,12 @@ public class MapTagsPlugin extends JavaPlugin {
 	private List<MapTag> maptags = new ArrayList<MapTag>();
     private CommandManager manager;
     private TabCompleteManager tabcompleter;
-    private String created,removed,exists,nopermission;
+    private String created,removed,exists,nopermission,notinregion;
+    private IWorldGuard WGmanager;
+    private boolean isWGEnabled;
 	public void onEnable() {
 		instance = this;
 		this.saveDefaultConfig();
-	
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
@@ -48,20 +53,23 @@ public class MapTagsPlugin extends JavaPlugin {
 		saveDefaultMessages();
 		manager = new CommandManager();
 		tabcompleter = new TabCompleteManager();
+		setupWorldGuard();
 		getCommand("maptag").setExecutor(manager);
 		getCommand("maptag").setTabCompleter(tabcompleter);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		waypoints = new WaypointsListener();
 		getServer().getPluginManager().registerEvents(waypoints, this);
 		reloadMsgs();
-		send("&aPlugin enabled!");
+		send("&aПлагин успешно загрузился, вроде бы :)");
 	}
 
 	public void onDisable() {
 		savetagsFile();
+		saveMessages();
+		saveConfig();
 		reloadMessages();
 		reloadConfig();
-		send("&cPlugin disabled.");
+		send("&cGoodbye!");
 	}
 
 	public void reloadtagsFile() {
@@ -86,13 +94,20 @@ public class MapTagsPlugin extends JavaPlugin {
 		if (maptags.stream().anyMatch(marker -> id.equalsIgnoreCase(marker.getId())) == true) {
 			p.sendMessage(exists);
 			return;
-		}
+		} 
+		if(this.checkForRegion(p)) {
+			
+		
 		ItemStack e = p.getInventory().getItemInMainHand();
 		MapTag tag = new MapTag(id, Colors.buildName(name), Colors.stringAsList(lore), p.getUniqueId(), p.getLocation(),
 				Colors.buildIcon(e), isLocal);
 		maptags.add(tag);
 		mySQL.createMapTag(tag);
+		
 		p.sendMessage(created.replace("%name%", Colors.paint(name)));
+		} else {
+			p.sendMessage(notinregion);
+		}
 	}
 
 	public boolean removeTag(String id, Player executor) {
@@ -193,6 +208,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	 this.reloadMessages();
 	 this.manager.reloadMessages();
 	 this.waypoints.reloadMessages();
+	 this.reloadMsgs();
  }
  public List<String> getPlayerTagsAsIds(Player p, boolean isLocal) {
 	 List<String> result = new ArrayList<>();
@@ -207,10 +223,38 @@ public class MapTagsPlugin extends JavaPlugin {
 	return result;
  }
 public void reloadMsgs() {
-	this.created = this.getMessages().getString("command.created");
-	this.removed = this.getMessages().getString("command.removed");
-	this.exists = this.getMessages().getString("command.alreadyexists");
-	this.nopermission = this.getMessages().getString("command.notowner");
+	this.notinregion = Colors.paint(getMessages().getString("worldguard.not-in-own-region"));
+	this.created = Colors.paint(getMessages().getString("command.created"));
+	this.removed = Colors.paint(getMessages().getString("command.removed"));
+	this.exists = Colors.paint(getMessages().getString("command.alreadyexists"));
+	this.nopermission = Colors.paint(getMessages().getString("command.notowner"));
 	
+	
+}
+public boolean checkForRegion(Player p) {
+if(isWGEnabled) {
+	return WGmanager.isInHisRegion(p);
+} else {
+	return true;
+}
+	
+}
+private void setupWorldGuard() {
+	if(Bukkit.getPluginManager().isPluginEnabled("WorldEdit") && Bukkit.getPluginManager().isPluginEnabled("WorldGuard") && this.getConfig().getBoolean("worldguard.enabled")) {
+		 WGmanager = new IWorldGuard();
+		 isWGEnabled = true;
+	} else {
+		if(this.getConfig().getBoolean("worldguard.enabled")) {
+			send("=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=");
+			send("&cWorldGuard включен в конфиге, но я не вижу его в списке плагинов.");
+			send("&cПроверь его наличие в папке plugins, а также на ошибки при загрузке.");
+			send("&cПока я его отключу :)");
+			send("=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=");
+			this.getConfig().set("worldguard.enabled", false);
+			this.saveConfig();
+			this.reloadConfig();
+		}
+		isWGEnabled = false;
+	}
 }
 }

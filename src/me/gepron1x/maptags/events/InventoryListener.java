@@ -68,7 +68,7 @@ public class InventoryListener implements Listener {
 				p.openInventory(gui.getInventory());
 				break;
 			default:
-				if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR)
+				if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR || e.getCurrentItem().equals(gui.getSelected()))
 					return;
 				final ItemStack is = e.getCurrentItem();
 				final int slot = e.getSlot();
@@ -78,7 +78,7 @@ public class InventoryListener implements Listener {
 				e.getClickedInventory().setItem(e.getSlot(), gui.getSelected());
 				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 10, 1);
 				Bukkit.getScheduler().runTaskLater(main, new Runnable() {
-
+                 
 					@Override
 					public void run() {
 						inv.setItem(slot, is);
@@ -91,7 +91,7 @@ public class InventoryListener implements Listener {
 		} else if (e.getClickedInventory().getHolder() instanceof MainGUI) {
 			e.setCancelled(true);
 			MainGUI maingui = (MainGUI) e.getClickedInventory().getHolder();
-			if (e.getCurrentItem().getType() == Material.ACACIA_STAIRS || e.getCurrentItem() == null)
+			if (e.getCurrentItem().getType() == Material.AIR || e.getCurrentItem() == null)
 				return;
 			maingui.executeAction(e.getSlot(), (Player) e.getWhoClicked());
 

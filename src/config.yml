@@ -11,7 +11,7 @@ gui:
     nopage:
       material: BARRIER
       amount: 1
-      name: '&cТакой метки не существует!'
+      name: '&cБольше нету страниц!'
       lore:
       - ''
     nextPage:
@@ -32,3 +32,5 @@ gui:
       name: '&3Метка успешно выбрана!'
       lore: 
       - ''
+worldguard:
+  enabled: false

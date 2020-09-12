@@ -21,7 +21,7 @@ import me.gepron1x.maptags.utlis.MapTag;
 public class CommandManager implements CommandExecutor {
 
 	public MapTagsPlugin main = MapTagsPlugin.getInstance();
-	private String shared,unshared,unselected,notOwner,playeronly,tagnotexists;
+	private String shared,unshared,unselected,notOwner,playeronly,tagnotexists,notinownregion;
 	
      public CommandManager() {
     	 
@@ -56,14 +56,10 @@ public class CommandManager implements CommandExecutor {
 				break;
 			case "help":
 				throwHelp(sender);
-			case "debug":
-				for(MapTag tag : main.getGlobalList()) {
-					sender.sendMessage(tag.getId());
-				}
-				sender.sendMessage(main.getMessages().getString("command.player-only"));
 				break;
 			case "reload":
 				main.reload();
+				break;
 			default:
 				throwInfo(sender);
 				break;
@@ -172,6 +168,10 @@ public class CommandManager implements CommandExecutor {
 				object = gson.toJson(loredump);
 				break;
 			case "location":
+				if(!main.checkForRegion(p)) {
+					p.sendMessage(notinownregion);
+					return;
+				}
 				Location location = p.getLocation();
 				tag.setLocation(location);
 				object = gson.toJson(location.serialize());
@@ -194,6 +194,7 @@ public class CommandManager implements CommandExecutor {
 
 	}
 public void reloadMessages() {
+	this.notinownregion = Colors.paint(main.getMessages().getString("worldguard.not-in-own-region"));
 	this.playeronly = Colors.paint(main.getMessages().getString("command.player-only"));
 	this.notOwner = Colors.paint(main.getMessages().getString("command.notowner"));
 	this.shared = Colors.paint(main.getMessages().getString("command.shared"));
