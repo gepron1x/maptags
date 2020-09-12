@@ -41,50 +41,51 @@ public class MySQLWorker {
 	public void setConnection(Connection c) {
 		this.connection = c;
 	}
-public void connect() {
-	final String hst = this.host;
-	final String db = this.database;
-	final String usr = this.username;
-	final String psw = this.password;
-	Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-		@Override
-		public void run() {
+	public void connect() {
+		final String hst = this.host;
+		final String db = this.database;
+		final String usr = this.username;
+		final String psw = this.password;
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-			try {
-				synchronized (this) {
-					if (connection != null && !connection.isClosed()) {
-						return;
+			@Override
+			public void run() {
+
+				try {
+					synchronized (this) {
+						if (connection != null && !connection.isClosed()) {
+							return;
+						}
+						Class.forName("com.mysql.jdbc.Driver");
+						setConnection(DriverManager.getConnection("jdbc:mysql://" + hst + "/" + db, usr, psw));
+
+						Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MYSQL CONNECTED");
+
 					}
-					Class.forName("com.mysql.jdbc.Driver");
-					setConnection(DriverManager.getConnection("jdbc:mysql://" + hst + "/" + db, usr, psw));
+				} catch (SQLException e) {
+					e.printStackTrace();
 
-					Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MYSQL CONNECTED");
-					
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			try {
-				Statement statement = connection.createStatement();
-				statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + "(`id` VARCHAR(10), "
-						+ " name VARCHAR(20), " + " lore TINYTEXT," + " location TINYTEXT, " + " owner VARCHAR(36),"
-						+ " icon BLOB," + " type ENUM('GLOBAL','LOCAL')," + " PRIMARY KEY (id))");
-				Statement statement2 = connection.createStatement();
-				statement2.executeUpdate("CREATE TABLE IF NOT EXISTS permissions " + "(`user` VARCHAR(36), "
-						+ "permission VARCHAR(10))");
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			plugin.loadTagsfromMySQL(getMapTags());
-			
-		}
+				try {
+					Statement statement = connection.createStatement();
+					statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + "(`id` VARCHAR(10), "
+							+ " name VARCHAR(20), " + " lore TINYTEXT," + " location TINYTEXT, " + " owner VARCHAR(36),"
+							+ " icon BLOB," + " type ENUM('GLOBAL','LOCAL')," + " PRIMARY KEY (id))");
+					Statement statement2 = connection.createStatement();
+					statement2.executeUpdate("CREATE TABLE IF NOT EXISTS permissions " + "(`user` VARCHAR(36), "
+							+ "permission VARCHAR(10))");
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				plugin.loadTagsfromMySQL(getMapTags());
 
-	});
-}
+			}
+
+		});
+	}
 
 	public void createMapTag(final MapTag tag) {
 		String dump;

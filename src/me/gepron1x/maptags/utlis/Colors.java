@@ -10,9 +10,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class Colors {
-	
+
 	public static String paint(String s) {
-		return ChatColor.RESET + ChatColor.translateAlternateColorCodes('&',s);
+		return ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', s);
 	}
 
 	public static List<String> stringAsList(String lore) {
@@ -26,24 +26,25 @@ public class Colors {
 		}
 		return lorear;
 	}
+
 	public static String buildName(String s) {
 		s = paint(s.replace('_', ' '));
 		return s;
 	}
+
 	public static ItemStack buildIcon(ItemStack e) {
 		if (e == null || e.getType() == Material.AIR)
 			e = new ItemStack(Material.BEDROCK);
 		return e;
 	}
+
 	public static List<String> paintList(List<String> s) {
 		List<String> result = new ArrayList<String>();
-		for(String stroke : s) {
+		for (String stroke : s) {
 			result.add(paint(stroke));
 		}
 		return result;
-		
+
 	}
- 
-	
 
 }

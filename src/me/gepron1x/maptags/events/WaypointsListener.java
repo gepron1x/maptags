@@ -17,7 +17,8 @@ public class WaypointsListener implements Listener {
 	private String reached;
 	private String notselected;
 	private HashMap<UUID, MapTag> waypoints;
-    MapTagsPlugin main;
+	MapTagsPlugin main;
+
 	public WaypointsListener() {
 		waypoints = new HashMap<UUID, MapTag>();
 		main = MapTagsPlugin.getInstance();
@@ -45,13 +46,13 @@ public class WaypointsListener implements Listener {
 
 	public void addWayPoint(Player p, MapTag tag) {
 		waypoints.put(p.getUniqueId(), tag);
-		 /*ArmorStand as = (ArmorStand) p.getLocation().getWorld().spawnEntity(p.getLocation(), EntityType.ARMOR_STAND);
-         as.remove();
-         as.setGravity(false);
-         as.setCanPickupItems(false);
-         as.setCustomName(Utils.Chat("&e&lSTATS"));
-         as.setCustomNameVisible(true);
-         as.setVisible(false);*/
+		/*
+		 * ArmorStand as = (ArmorStand)
+		 * p.getLocation().getWorld().spawnEntity(p.getLocation(),
+		 * EntityType.ARMOR_STAND); as.remove(); as.setGravity(false);
+		 * as.setCanPickupItems(false); as.setCustomName(Utils.Chat("&e&lSTATS"));
+		 * as.setCustomNameVisible(true); as.setVisible(false);
+		 */
 	}
 
 	public void removeWayPoint(Player p) {
@@ -61,9 +62,10 @@ public class WaypointsListener implements Listener {
 		}
 		waypoints.remove(p.getUniqueId());
 	}
+
 	public void reloadMessages() {
 		this.notselected = Colors.paint(main.getMessages().getString("waypoints.notselected"));
-		this.actionbar =Colors.paint(main.getMessages().getString("waypoints.actionbar"));
+		this.actionbar = Colors.paint(main.getMessages().getString("waypoints.actionbar"));
 		this.reached = Colors.paint(main.getMessages().getString("waypoints.reached"));
 	}
 

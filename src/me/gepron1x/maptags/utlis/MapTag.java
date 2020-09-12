@@ -52,7 +52,7 @@ public class MapTag {
 		int z = (int) location.getZ();
 		loredump.add(Colors.paint("&f" + x + " " + y + " " + z));
 		loredump.add(Colors.paint("&fВладелец: " + getPlayerName(owner)));
-		loredump.add("id: "+getId());
+		loredump.add("id: " + getId());
 		meta.setLore(loredump);
 		result.setItemMeta(meta);
 		return result;
@@ -103,12 +103,13 @@ public class MapTag {
 	public boolean getIsLocal() {
 		return isLocal;
 	}
+
 	private String getPlayerName(UUID player) {
 		String nick = "";
 		Player p = Bukkit.getPlayer(player);
-		if(p == null) {
+		if (p == null) {
 			nick = Bukkit.getOfflinePlayer(player).getName();
-			
+
 		} else {
 			nick = p.getDisplayName();
 		}
