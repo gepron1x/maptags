@@ -1,11 +1,23 @@
 package me.gepron1x.maptags.utlis;
 
 import java.lang.reflect.InvocationTargetException;
+
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import com.comphenix.packetwrapper.WrapperPlayServerEntityDestroy;
+import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
+import com.comphenix.packetwrapper.WrapperPlayServerEntityTeleport;
+import com.comphenix.packetwrapper.WrapperPlayServerSpawnEntity;
+import com.comphenix.protocol.utility.Util;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+
+import net.md_5.bungee.api.ChatColor;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -13,77 +25,69 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
-
 public class ASHologram {
-	private ProtocolManager protocolManager;
 	private int entityID;
+	
+	private WrapperPlayServerSpawnEntity spawn;
+	private WrapperPlayServerEntityMetadata meta;
+	private WrapperPlayServerEntityDestroy destroy;
+	private String name;
 	private Player handler;
-	public ASHologram(Player p) {
+
+	public ASHologram(Player p, String name) {
+		this.name = name;
+		this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
 		this.handler = p;
-		protocolManager = ProtocolLibrary.getProtocolManager();
+		this.spawn = new WrapperPlayServerSpawnEntity();
+		this.meta = new WrapperPlayServerEntityMetadata();
+		this.destroy = new WrapperPlayServerEntityDestroy();
+		this.spawn.setType(EntityType.ARMOR_STAND);
+		this.spawn.setEntityID(entityID);
+		this.spawn.setUniqueId(UUID.randomUUID());
+		this.spawn.setX(handler.getLocation().getX() + 3);
+		this.spawn.setY(handler.getLocation().getY() + 1);
+		this.spawn.setZ(handler.getLocation().getZ() + 3);
+		WrappedChatComponent nick = WrappedChatComponent.fromText(name);
+		List<WrappedWatchableObject> obj = Util.asList(
+				new WrappedWatchableObject(new WrappedDataWatcherObject(14, Registry.get(Byte.class)), (byte) 0x01),
+				new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), (byte) 0x20 | 0x40),
+				new WrappedWatchableObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), true),
+				new WrappedWatchableObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)),
+						Optional.of(nick.getHandle())));
+		this.meta = new WrapperPlayServerEntityMetadata();
+		this.meta.setEntityID(entityID);
+		this.meta.setMetadata(obj);
+		this.destroy.setEntityIds(new int[] { entityID });
+		spawn(handler);
 	}
-	public void spawn() {
-		 PacketContainer handle = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-	        handle.getModifier().writeDefaults();
-          
-	       entityID = (int)(Math.random() * Integer.MAX_VALUE);
-	        handle.getIntegers().write(0, entityID);
 
-	        handle.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
-	        handle.getDoubles().write(0, handler.getLocation().getX()); // x
-	        handle.getDoubles().write(1, handler.getLocation().getY()); // y
-	        handle.getDoubles().write(2, handler.getLocation().getZ()); // z
-	 	   PacketContainer handle2 = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-	       handle2.getModifier().writeDefaults();
-	       handle2.getIntegers().write(0, entityID);
-	       WrappedDataWatcher dataWatcher = new WrappedDataWatcher(handle2.getWatchableCollectionModifier().read(0));
-	       WrappedDataWatcher.WrappedDataWatcherObject isInvisibleIndex = new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class));
-	       dataWatcher.setObject(isInvisibleIndex, (byte) 0x20);
-	        try {
-	            ProtocolLibrary.getProtocolManager().sendServerPacket(handler, handle);
-	        } catch (InvocationTargetException e) {
-	            throw new RuntimeException("Cannot send packet.", e);
-	        }
+	public void spawn(Player p) {
+		this.spawn.sendPacket(handler);
+		this.meta.sendPacket(handler);
 
-	        // custom name etc
-
-	     
 	}
-  public void changeLocation() {
-	  PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_TELEPORT);
-      packet.getIntegers().write(0, this.entityID); //айди энтити
-      packet.getDoubles().write(0, handler.getLocation().getX()+3); //x
-      packet.getDoubles().write(1, handler.getLocation().getY()+1); //y
-      packet.getDoubles().write(2, handler.getLocation().getZ()+3); //z
-      packet.getBytes().write(0, (byte) 0);
-      packet.getBytes().write(1, (byte) 0);
-      packet.getBooleans().write(0, false);
-      try {
-		this.protocolManager.sendServerPacket(handler, packet);
-	} catch (InvocationTargetException e) {
-		// TODO Автоматически созданный блок catch
-		e.printStackTrace();
+
+	public void setLocation() {
+		WrapperPlayServerEntityTeleport teleport = new WrapperPlayServerEntityTeleport();
+		teleport.setEntityID(entityID);
+		teleport.setX(handler.getLocation().getX() + 3);
+		teleport.setY(handler.getLocation().getY() + 1);
+		teleport.setZ(handler.getLocation().getZ() + 3);
+		teleport.sendPacket(handler);
+
 	}
-	  
-  }
- public void changeName(String name) {
-	   PacketContainer handle2 = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-	   WrappedChatComponent wrappedChatComponent = WrappedChatComponent.fromText(name);
-	   WrappedDataWatcher metadata = new WrappedDataWatcher();
-	   Optional<?> opt = Optional
-               .of(WrappedChatComponent
-                       .fromChatMessage(name)[0].getHandle());
-	   
-       metadata.setObject(new WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), opt);
-       
-       handle2.getIntegers().write(0, entityID);
-       handle2.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
-       try {
-           ProtocolLibrary.getProtocolManager().sendServerPacket(handler, handle2);
-       } catch (InvocationTargetException e) {
-           throw new RuntimeException("Cannot send packet.", e);
-       }
- }
+
+	public void setName(String name) {
+		this.name = name;
+		WrappedChatComponent nick = WrappedChatComponent.fromText(ChatColor.translateAlternateColorCodes('&', name));
+		this.name = name;
+		this.meta.getMetadata().get(3).setValue(Optional.of(nick.getHandle()));
+		meta.sendPacket(handler);
+	}
+	public void destroy() {
+		this.destroy.sendPacket(handler);
+	}
 }

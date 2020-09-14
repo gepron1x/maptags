@@ -69,11 +69,11 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void onDisable() {
+		reloadMessages();
+		reloadConfig();
 		savetagsFile();
 		saveMessages();
 		saveConfig();
-		reloadMessages();
-		reloadConfig();
 		send("&cGoodbye!");
 	}
 

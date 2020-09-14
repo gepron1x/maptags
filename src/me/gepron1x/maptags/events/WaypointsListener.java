@@ -39,35 +39,38 @@ public class WaypointsListener implements Listener {
 		if (tag == null || holo == null)
 			return;
 		Integer distance = (int) p.getLocation().distance(tag.getLocation());
-
-		TextComponent text = new TextComponent(
-				actionbar.replace("%distance%", distance.toString()).replaceAll("%maptag%", tag.getName()));
+         String temp = actionbar.replace("%distance%", distance.toString()).replaceAll("%maptag%", tag.getName());
+		TextComponent text = new TextComponent(temp);
 		p.spigot().sendMessage(ChatMessageType.ACTION_BAR, text);
-		holo.changeLocation();
-		holo.changeName("Локация етпа");
+		holo.setLocation();
+		holo.setName(temp);
 		if (distance == 0) {
 			p.sendMessage(reached);
-			waypoints.remove(p.getUniqueId());
+			removeWayPoint(e.getPlayer());
 		}
+	
 
 	}
 
 	public void addWayPoint(Player p, MapTag tag) {
 		waypoints.put(p.getUniqueId(), tag);
-		ASHologram hologram = new ASHologram(p);
+		ASHologram hologram = new ASHologram(p,tag.getName());
 		holos.put(p, hologram);
-		hologram.spawn();
-		hologram.changeName("Sex is dead");
+		hologram.spawn(p);
+		
 		
 		
 	}
 
 	public void removeWayPoint(Player p) {
-		if (waypoints.get(p.getUniqueId()) == null) {
+		if (waypoints.get(p.getUniqueId()) == null || holos.get(p) == null) {
 			p.sendMessage(notselected);
 			return;
 		}
 		waypoints.remove(p.getUniqueId());
+		holos.get(p).destroy();
+		holos.remove(p);
+		
 	}
 
 	public void reloadMessages() {
