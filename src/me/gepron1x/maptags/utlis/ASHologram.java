@@ -37,23 +37,29 @@ public class ASHologram {
 	private String name;
 	private Player handler;
 
-	public ASHologram(Player p, String name) {
+	public ASHologram(Player p, String name, EntityType type,Location loc,boolean isGlowing) {
 		this.name = name;
+		byte meta;
+		if(isGlowing == false) {
+			meta = 0x20 | 0x40;
+		} else {
+			meta = 0x20;
+		}
 		this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
 		this.handler = p;
 		this.spawn = new WrapperPlayServerSpawnEntity();
 		this.meta = new WrapperPlayServerEntityMetadata();
 		this.destroy = new WrapperPlayServerEntityDestroy();
-		this.spawn.setType(EntityType.ARMOR_STAND);
+		this.spawn.setType(type);
 		this.spawn.setEntityID(entityID);
 		this.spawn.setUniqueId(UUID.randomUUID());
-		this.spawn.setX(handler.getLocation().getX() + 3);
-		this.spawn.setY(handler.getLocation().getY() + 1);
-		this.spawn.setZ(handler.getLocation().getZ() + 3);
+		this.spawn.setX(loc.getX());
+		this.spawn.setY(loc.getY());
+		this.spawn.setZ(loc.getZ());
 		WrappedChatComponent nick = WrappedChatComponent.fromText(name);
 		List<WrappedWatchableObject> obj = Util.asList(
 				new WrappedWatchableObject(new WrappedDataWatcherObject(14, Registry.get(Byte.class)), (byte) 0x01),
-				new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), (byte) 0x20 | 0x40),
+				new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), meta),
 				new WrappedWatchableObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), true),
 				new WrappedWatchableObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)),
 						Optional.of(nick.getHandle())));
@@ -61,10 +67,10 @@ public class ASHologram {
 		this.meta.setEntityID(entityID);
 		this.meta.setMetadata(obj);
 		this.destroy.setEntityIds(new int[] { entityID });
-		spawn(handler);
+		spawn();
 	}
 
-	public void spawn(Player p) {
+	public void spawn() {
 		this.spawn.sendPacket(handler);
 		this.meta.sendPacket(handler);
 
