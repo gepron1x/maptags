@@ -20,9 +20,7 @@ import com.comphenix.packetwrapper.WrapperPlayServerSpawnEntity;
 import com.comphenix.protocol.utility.Util;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-
 import org.bukkit.ChatColor;
-
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
