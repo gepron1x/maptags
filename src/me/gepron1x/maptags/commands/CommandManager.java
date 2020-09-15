@@ -176,6 +176,7 @@ public class CommandManager implements CommandExecutor {
 				Location location = p.getLocation();
 				tag.setLocation(location);
 				object = gson.toJson(location.serialize());
+				break;
 			case "icon":
 				ItemStack is = Colors.buildIcon(p.getInventory().getItemInMainHand());
 				tag.setIcon(is);

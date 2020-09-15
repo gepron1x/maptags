@@ -21,9 +21,9 @@ public class WayPoint {
 		plugin = MapTagsPlugin.getInstance();
 		this.target = target;
 		this.actionbar = plugin.getMessages().getString("waypoints.actionbar");
-		Location tloc = this.target.getLocation();
+		Location tloc = this.target.getLocation().clone();
 		Location head = p.getLocation().add(0, p.getEyeHeight(), 0);
-		Vector direction = tloc.subtract(head).toVector().normalize().multiply(3);
+		Vector direction = tloc.subtract(head).toVector().normalize().multiply(5);
 		this.hologram = new ASHologram(p, target.getName(), EntityType.ARMOR_STAND, p.getLocation().add(direction), false);
 		this.glow = new ASHologram(p, Colors.paint("&cИди сюда!"), EntityType.ARMOR_STAND, target.getLocation(), true);
 		glow.spawn();
@@ -40,7 +40,7 @@ public class WayPoint {
 	public void onMove() {
 		String msg = getActionBar();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
-		Location tloc = this.target.getLocation();
+		Location tloc = this.target.getLocation().clone();
 		Location head = player.getLocation().add(0, player.getEyeHeight(), 0);
 		hologram.setLocation(head, tloc);
 		hologram.setName(msg);

@@ -306,8 +306,9 @@ public class MySQLWorker {
 			@Override
 			public void run() {
 				try {
-					Statement statement = connection.createStatement();
-					statement.executeUpdate("UPDATE maptags SET " + key + "='" + object + "'");
+				PreparedStatement statement = connection.prepareStatement("UPDATE maptags SET " + key + "=?");
+				statement.setString(1, object);
+					statement.executeUpdate();
 				} catch (SQLException e) {
 					// TODO Автоматически созданный блок catch
 					e.printStackTrace();
@@ -355,7 +356,7 @@ public class MySQLWorker {
 	}
 
 	// InDev
-	public HashMap<UUID, List<String>> getPlayerPermissions() {
+	/*public HashMap<UUID, List<String>> getPlayerPermissions() {
 		HashMap<UUID, List<String>> rslt = new HashMap<UUID, List<String>>();
 		Statement statement;
 		ResultSet result = null;
@@ -368,6 +369,6 @@ public class MySQLWorker {
 
 		}
 		return rslt;
-	}
+	}*/
 
 }
