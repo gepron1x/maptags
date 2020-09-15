@@ -33,8 +33,6 @@ import me.gepron1x.maptags.utlis.MapTag;
 public class MapTagsPlugin extends JavaPlugin {
 	private MySQLWorker mySQL;
 	private static MapTagsPlugin instance;
-	private File tagsFile = new File(getDataFolder(), "tags.yml");
-	private FileConfiguration mapTags;
 	private HashMap<UUID,List<String>> permissions;
 	WaypointsListener waypoints;
 	private File msgFile = new File(getDataFolder(), "messages.yml");
@@ -51,10 +49,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		this.saveDefaultConfig();
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
-		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		this.permissions = new HashMap<UUID,List<String>>();
-		
-		saveCustomDefaultConfig();
 		saveDefaultMessages();
 	
 		manager = new CommandManager();
@@ -72,28 +67,9 @@ public class MapTagsPlugin extends JavaPlugin {
 	public void onDisable() {
 		reloadMessages();
 		reloadConfig();
-		savetagsFile();
 		saveMessages();
 		saveConfig();
 		send("&cGoodbye!");
-	}
-
-	public void reloadtagsFile() {
-		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
-		final InputStream defConfigStream = getResource("tags.yml");
-		if (defConfigStream == null) {
-			return;
-		}
-		mapTags.setDefaults(
-				YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
-	}
-
-	public void savetagsFile() {
-		try {
-			getConfig().save(tagsFile);
-		} catch (IOException ex) {
-			getLogger().log(Level.SEVERE, "Could not save config to " + tagsFile, ex);
-		}
 	}
 
 	public void addTag(String id, String name, String lore, Player p, boolean isLocal) {
@@ -130,12 +106,6 @@ public class MapTagsPlugin extends JavaPlugin {
 		executor.sendMessage(removed);
 		return true;
 
-	}
-
-	public void saveCustomDefaultConfig() {
-		if (!tagsFile.exists()) {
-			saveResource("tags.yml", false);
-		}
 	}
 
 	public void reloadMessages() {
