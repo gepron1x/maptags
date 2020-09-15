@@ -2,13 +2,18 @@ package me.gepron1x.maptags.utlis;
 
 import java.lang.reflect.InvocationTargetException;
 
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+
 import com.comphenix.packetwrapper.WrapperPlayServerEntityDestroy;
 import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
 import com.comphenix.packetwrapper.WrapperPlayServerEntityTeleport;
@@ -17,7 +22,7 @@ import com.comphenix.protocol.utility.Util;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -30,7 +35,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 
 public class ASHologram {
 	private int entityID;
-	
+	private Scoreboard board;
 	private WrapperPlayServerSpawnEntity spawn;
 	private WrapperPlayServerEntityMetadata meta;
 	private WrapperPlayServerEntityDestroy destroy;
@@ -38,9 +43,14 @@ public class ASHologram {
 	private Player handler;
 
 	public ASHologram(Player p, String name, EntityType type,Location loc,boolean isGlowing) {
+		ScoreboardManager manager = Bukkit.getScoreboardManager();
+		this.board = manager.getNewScoreboard();
+		this.board.registerNewTeam("dump");
+		UUID uuid = UUID.randomUUID();
+	   
 		this.name = name;
 		byte meta;
-		if(isGlowing == false) {
+		if(isGlowing == true) {
 			meta = 0x20 | 0x40;
 		} else {
 			meta = 0x20;
@@ -52,7 +62,7 @@ public class ASHologram {
 		this.destroy = new WrapperPlayServerEntityDestroy();
 		this.spawn.setType(type);
 		this.spawn.setEntityID(entityID);
-		this.spawn.setUniqueId(UUID.randomUUID());
+		this.spawn.setUniqueId(uuid);
 		this.spawn.setX(loc.getX());
 		this.spawn.setY(loc.getY());
 		this.spawn.setZ(loc.getZ());
@@ -72,6 +82,8 @@ public class ASHologram {
 
 	public void spawn() {
 		this.spawn.sendPacket(handler);
+		board.getTeam("dump").setColor(ChatColor.RED);
+		board.getTeam("dump").addEntry(this.spawn.getUniqueId().toString());
 		this.meta.sendPacket(handler);
 
 	}

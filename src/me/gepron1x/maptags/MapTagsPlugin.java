@@ -203,8 +203,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void editTag(MapTag tag, int i) {
-		maptags.remove(i);
-		maptags.set(i, tag);
+    maptags.set(i, tag);
 
 	}
 
