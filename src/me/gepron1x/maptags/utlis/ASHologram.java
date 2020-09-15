@@ -80,9 +80,9 @@ public class ASHologram {
 		teleport.setEntityID(entityID);
 		//
 		Vector direction = target.subtract(loc).toVector().normalize().multiply(3);
-		teleport.setX(loc.getX());
-		teleport.setY(loc.getY());
-		teleport.setZ(loc.getZ());
+		teleport.setX(direction.getX());
+		teleport.setY(direction.getY());
+		teleport.setZ(direction.getZ());
 		//
 		teleport.sendPacket(handler);
 
