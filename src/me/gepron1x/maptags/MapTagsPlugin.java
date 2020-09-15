@@ -29,8 +29,6 @@ import me.gepron1x.maptags.utlis.MapTag;
 public class MapTagsPlugin extends JavaPlugin {
 	private MySQLWorker mySQL;
 	private static MapTagsPlugin instance;
-	private File tagsFile = new File(getDataFolder(), "tags.yml");
-	private FileConfiguration mapTags;
 	//private HashMap<UUID,List<String>> permissions;
 	WaypointsListener waypoints;
 	private File msgFile = new File(getDataFolder(), "messages.yml");
@@ -45,17 +43,17 @@ public class MapTagsPlugin extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		this.saveDefaultConfig();
+		saveDefaultMessages();
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
-		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
 		//this.permissions = new HashMap<UUID,List<String>>();
 		
-		saveCustomDefaultConfig();
-		saveDefaultMessages();
+		
 	
 		manager = new CommandManager();
 		tabcompleter = new TabCompleteManager();
 		setupWorldGuard();
+		setupProtocolLib();
 		getCommand("maptag").setExecutor(manager);
 		getCommand("maptag").setTabCompleter(tabcompleter);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
@@ -68,29 +66,12 @@ public class MapTagsPlugin extends JavaPlugin {
 	public void onDisable() {
 		reloadMessages();
 		reloadConfig();
-		savetagsFile();
 		saveMessages();
 		saveConfig();
 		send("&cGoodbye!");
 	}
 
-	public void reloadtagsFile() {
-		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
-		final InputStream defConfigStream = getResource("tags.yml");
-		if (defConfigStream == null) {
-			return;
-		}
-		mapTags.setDefaults(
-				YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
-	}
-
-	public void savetagsFile() {
-		try {
-			getConfig().save(tagsFile);
-		} catch (IOException ex) {
-			getLogger().log(Level.SEVERE, "Could not save config to " + tagsFile, ex);
-		}
-	}
+	
 
 	public void addTag(String id, String name, String lore, Player p, boolean isLocal) {
 		if (maptags.stream().anyMatch(marker -> id.equalsIgnoreCase(marker.getId())) == true) {
@@ -116,7 +97,7 @@ public class MapTagsPlugin extends JavaPlugin {
 				.orElse(null);
 		if (tag == null)
 			return false;
-		if (!tag.getOwner().equals(executor.getUniqueId())) {
+		if (!(tag.getOwner().equals(executor.getUniqueId()) && executor.hasPermission("maptags.admin"))) {
 			executor.sendMessage(nopermission);
 			return false;
 		}
@@ -128,11 +109,6 @@ public class MapTagsPlugin extends JavaPlugin {
 
 	}
 
-	public void saveCustomDefaultConfig() {
-		if (!tagsFile.exists()) {
-			saveResource("tags.yml", false);
-		}
-	}
 
 	public void reloadMessages() {
 		messages = YamlConfiguration.loadConfiguration(msgFile);
@@ -227,7 +203,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	}
 
 	public void reloadMsgs() {
-		this.notinregion = "текст";
+		this.notinregion = Colors.paint(getMessages().getString("worldguard.notInOwnRegion"));
 		this.created = Colors.paint(getMessages().getString("command.created"));
 		this.removed = Colors.paint(getMessages().getString("command.removed"));
 		this.exists = Colors.paint(getMessages().getString("command.alreadyexists"));
@@ -264,4 +240,16 @@ public class MapTagsPlugin extends JavaPlugin {
 			isWGEnabled = false;
 		}
 	}
+  private void setupProtocolLib() {
+	  if(!(Bukkit.getPluginManager().isPluginEnabled("ProtocolLib") && this.getConfig().getBoolean("waypoints.holograms.enabled"))) {
+		    send("=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=");
+			send("&cГолограммы включены в конфиге, но я не вижу ProtocolLib :)");
+			send("&cПроверь его наличие в папке plugins, а также на ошибки при загрузке.");
+			send("&cПока я его отключу :)");
+			send("=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=");
+			getConfig().set("waypoints.holograms.enabled", false);
+			this.saveConfig();
+			this.reloadConfig();
+	  }
+  }
 }

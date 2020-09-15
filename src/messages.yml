@@ -8,6 +8,7 @@ command:
   unselected: 'ааа'
   notexists: '&cМетки с таким айди не существует!'
   alreadyexists: '&cМетка с таким айди уже существует.'
+  noPermission: '&cВам нельзя отправлять эту команду!'
   edit:
     name: '&aИмя успешно измененено на %argument%.'
     lore: '&aОписание успешно изменено.'
@@ -29,8 +30,8 @@ command:
   - '&3Пиши /help чтобы узнать больше.'
 waypoints: 
   notselected: '&cВы не выбрали метку!'
-  actionbar: '&6&lРасстояние до метки "%maptag%&6": %distance%'
+  distance: '&6Расстояние до метки "%maptag%&6": %distance%'
   reached: '&aВы успешно дошли до метки.'
-  tagposition: '&cИди сюда!'
+  podskazka: '&cИди сюда!'
 worldguard:
   notInOwnRegion: '&cВы находитесь в чужом регионе!'

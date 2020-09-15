@@ -53,10 +53,6 @@ public class WaypointsListener implements Listener {
 		}
 		WayPoint point = new WayPoint(tag,p);
 		waypoints.put(p.getUniqueId(), point);
-		
-		
-		
-		
 	}
 
 	public void removeWayPoint(Player p) {
@@ -66,8 +62,6 @@ public class WaypointsListener implements Listener {
 		}
 		waypoints.get(p.getUniqueId()).destroy();
 		waypoints.remove(p.getUniqueId());
-		
-		
 	}
 
 	public void reloadMessages() {

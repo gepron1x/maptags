@@ -22,7 +22,7 @@ import me.gepron1x.maptags.utlis.MapTag;
 public class CommandManager implements CommandExecutor {
 
 	public MapTagsPlugin main = MapTagsPlugin.getInstance();
-	private String shared,unshared,unselected,notOwner,playeronly,tagnotexists,notinownregion;
+	private String shared,unshared,unselected,notOwner,playeronly,tagnotexists,notinownregion,nopermission;
 	
      public CommandManager() {
     	 
@@ -34,44 +34,59 @@ public class CommandManager implements CommandExecutor {
 		if (args.length == 0)
 			return true;
 		if (sender instanceof Player) {
-			switch (args[0]) {
-			case "create":
-				createCommand(sender, args);
-				break;
-			case "remove":
-				removeCommand(sender, args);
-				break;
-			case "list":
-				listCommand(sender, args);
-				break;
-			case "share":
-			case "unshare":
-				shareCommand(sender, args);
-				break;
-			case "unselect":
-				main.getWaypoints().removeWayPoint((Player) sender);
-				sender.sendMessage(unselected);
-				break;
-			case "edit":
-				editCommand(sender, args);
-				break;
-			case "help":
-				throwHelp(sender);
-				break;
-			case "reload":
-				main.reload();
-				break;
-			default:
-				throwInfo(sender);
-				break;
+			if(sender.hasPermission("maptags.user") || sender.hasPermission("maptags.admin")) {
+				switch (args[0]) {
+				
+				case "create":
+					createCommand(sender, args);
+					break;
+				case "remove":
+					removeCommand(sender, args);
+					break;
+				case "list":
+					listCommand(sender, args);
+					break;
+				case "share":
+				case "unshare":
+					shareCommand(sender, args);
+					break;
+				case "unselect":
+					main.getWaypoints().removeWayPoint((Player) sender);
+					sender.sendMessage(unselected);
+					break;
+				case "edit":
+					editCommand(sender, args);
+					break;
+				
+				case "help":
+					throwHelp(sender);
+					break;
+		
+				case "reload":
+					if(sender.hasPermission("maptags.admin")) {
+						main.reload();
+					} else {
+						sender.sendMessage(nopermission);
+					}
+					
+					break;
+				default:
+					throwInfo(sender);
+					break;
+				}
+				return true;
+			} else {
+				sender.sendMessage(nopermission);
 			}
-			return true;
-		} else {
-			sender.sendMessage(playeronly);
-		}
+			
+			} else {
+				sender.sendMessage(playeronly);
+			}
+			
 		return true;
 	}
-
+		
+	
 	private void throwHelp(CommandSender sender) {
 		for (String msg : main.getMessages().getStringList("command.help")) {
 			sender.sendMessage(Colors.paint(msg));
@@ -86,6 +101,7 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	private void createCommand(CommandSender sender, String[] args) {
+		
 		boolean isLocal = false;
 		Player p = (Player) sender;
 
@@ -97,6 +113,7 @@ public class CommandManager implements CommandExecutor {
 
 	private void removeCommand(CommandSender sender, String[] args) {
 	main.removeTag(args[1], (Player) sender);
+	
 	}
 	private void listCommand(CommandSender sender, String[] args) {
 		GlobalMapTagsGUI gui;
@@ -146,7 +163,7 @@ public class CommandManager implements CommandExecutor {
 	private void editCommand(CommandSender sender, String[] args) {
 		Gson gson = new Gson();
 		String object = "";
-		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equals(marker.getId()))
+		MapTag tag = main.getGlobalList().stream().filter(marker -> args[1].equalsIgnoreCase(marker.getId()))
 				.findAny().orElse(null);
 		if (tag == null) {
 			sender.sendMessage(tagnotexists);
@@ -160,7 +177,6 @@ public class CommandManager implements CommandExecutor {
 				String name = Colors.buildName(args[3]);
 				tag.setName(name);
 				object = name;
-
 				break;
 			case "lore":
 				String lore = args[3];
@@ -178,7 +194,7 @@ public class CommandManager implements CommandExecutor {
 				object = gson.toJson(location.serialize());
 				break;
 			case "icon":
-				ItemStack is = Colors.buildIcon(p.getInventory().getItemInMainHand());
+				ItemStack is = Colors.buildIcon(p.getInventory().getItemInMainHand().clone());
 				tag.setIcon(is);
 				object = gson.toJson(is.serialize());
 				break;
@@ -196,7 +212,8 @@ public class CommandManager implements CommandExecutor {
 
 	}
 public void reloadMessages() {
-	this.notinownregion = "текст";//Colors.paint(main.getMessages().getString("worldguard.notInOwnRegion"));
+	this.nopermission = Colors.paint(main.getMessages().getString("command.noPermission"));
+	this.notinownregion = Colors.paint(main.getMessages().getString("worldguard.notInOwnRegion"));
 	this.playeronly = Colors.paint(main.getMessages().getString("command.player-only"));
 	this.notOwner = Colors.paint(main.getMessages().getString("command.notowner"));
 	this.shared = Colors.paint(main.getMessages().getString("command.shared"));

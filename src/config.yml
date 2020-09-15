@@ -34,3 +34,18 @@ gui:
       - ''
 worldguard:
   enabled: false
+waypoints:
+#Голограммы требуют наличия ProtocolLib
+  holograms:
+    enabled: true
+    distance:
+      enabled: true
+    podzkazka:
+      enabled: true
+      text: '&cИди сюда!'
+  actionbar: 
+    enabled: false
+
+
+
+  
