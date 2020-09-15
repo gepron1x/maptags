@@ -15,7 +15,6 @@ public class WayPoint {
 	private ASHologram glow;
 	private Player player;
 	private String actionbar;
-
 	private MapTagsPlugin plugin;
 
 	public WayPoint(MapTag target, Player p) {
@@ -41,6 +40,7 @@ public class WayPoint {
 
 	public void onMove() {
 		String msg = getActionBar();
+	    Location loc = target.getLocation();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
 		hologram.setLocation();
 		hologram.setName(msg);
