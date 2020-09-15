@@ -5,15 +5,10 @@ package me.gepron1x.maptags.utlis;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.Vector;
-
 import com.comphenix.packetwrapper.WrapperPlayServerEntityDestroy;
 import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
 import com.comphenix.packetwrapper.WrapperPlayServerEntityTeleport;
@@ -80,9 +75,10 @@ public class ASHologram {
 		teleport.setEntityID(entityID);
 		//
 		Vector direction = target.subtract(loc).toVector().normalize().multiply(3);
-		teleport.setX(loc.getX());
-		teleport.setY(loc.getY());
-		teleport.setZ(loc.getZ());
+		Location l = loc.add(direction);
+		teleport.setX(l.getX());
+		teleport.setY(l.getY());
+		teleport.setZ(l.getZ());
 		//
 		teleport.sendPacket(handler);
 
