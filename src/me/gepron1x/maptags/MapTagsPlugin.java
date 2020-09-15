@@ -2,11 +2,13 @@ package me.gepron1x.maptags;
 
 import java.io.File;
 
+
 import me.gepron1x.maptags.utlis.MySQLWorker;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -19,11 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import com.google.common.base.Charsets;
-
 import me.NukerFall.WG.IWorldGuard;
 import me.gepron1x.maptags.commands.CommandManager;
 import me.gepron1x.maptags.commands.TabCompleteManager;
@@ -37,6 +35,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	private static MapTagsPlugin instance;
 	private File tagsFile = new File(getDataFolder(), "tags.yml");
 	private FileConfiguration mapTags;
+	private HashMap<UUID,List<String>> permissions;
 	WaypointsListener waypoints;
 	private File msgFile = new File(getDataFolder(), "messages.yml");
 	private FileConfiguration messages;
@@ -53,6 +52,8 @@ public class MapTagsPlugin extends JavaPlugin {
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
+		this.permissions = new HashMap<UUID,List<String>>();
+		
 		saveCustomDefaultConfig();
 		saveDefaultMessages();
 	

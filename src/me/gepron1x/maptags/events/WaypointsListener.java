@@ -1,20 +1,18 @@
 package me.gepron1x.maptags.events;
 
 import java.util.HashMap;
+
 import java.util.UUID;
 
-import org.bukkit.entity.EntityType;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import me.gepron1x.maptags.MapTagsPlugin;
-import me.gepron1x.maptags.utlis.ASHologram;
 import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.MapTag;
 import me.gepron1x.maptags.utlis.WayPoint;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class WaypointsListener implements Listener {
 	private String reached;

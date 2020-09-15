@@ -1,6 +1,5 @@
 package me.gepron1x.maptags.utlis;
 
-import java.lang.reflect.InvocationTargetException;
 
 
 import java.util.List;
@@ -24,12 +23,6 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import org.bukkit.ChatColor;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
@@ -107,5 +100,8 @@ public class ASHologram {
 	}
 	public void destroy() {
 		this.destroy.sendPacket(handler);
+	}
+	public String getName() {
+		return name;
 	}
 }
