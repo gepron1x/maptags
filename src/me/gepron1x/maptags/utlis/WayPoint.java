@@ -22,14 +22,10 @@ public class WayPoint {
 		plugin = MapTagsPlugin.getInstance();
 		this.target = target;
 		this.actionbar = plugin.getMessages().getString("waypoints.actionbar");
-		//Location tloc = this.target.getLocation();
-		//Location head = p.getLocation().add(0, p.getEyeHeight(), 0);
-		//Vector direction = head.subtract(tloc).toVector().normalize().multiply(3);
-		this.hologram = new ASHologram(p, target.getName(), EntityType.ARMOR_STAND, /**/p.getLocation(), false);
 		Location tloc = this.target.getLocation();
 		Location head = p.getLocation().add(0, p.getEyeHeight(), 0);
 		Vector direction = tloc.subtract(head).toVector().normalize().multiply(3);
-		this.hologram = new ASHologram(p, target.getName(), EntityType.ARMOR_STAND, /**/direction.toLocation(p.getWorld()), false);
+		this.hologram = new ASHologram(p, target.getName(), EntityType.ARMOR_STAND, p.getLocation().add(direction), false);
 		this.glow = new ASHologram(p, Colors.paint("&cИди сюда!"), EntityType.ARMOR_STAND, target.getLocation(), true);
 		glow.spawn();
 		hologram.spawn();
