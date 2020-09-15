@@ -82,9 +82,11 @@ public class ASHologram {
 	public void setLocation() {
 		WrapperPlayServerEntityTeleport teleport = new WrapperPlayServerEntityTeleport();
 		teleport.setEntityID(entityID);
-		teleport.setX(handler.getLocation().getX() + 3);
-		teleport.setY(handler.getLocation().getY() + 1);
-		teleport.setZ(handler.getLocation().getZ() + 3);
+		//
+		teleport.setX(this.spawn.getX());
+		teleport.setY(this.spawn.getY());
+		teleport.setZ(this.spawn.getZ());
+		//
 		teleport.sendPacket(handler);
 
 	}

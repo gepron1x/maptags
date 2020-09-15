@@ -353,23 +353,21 @@ public class MySQLWorker {
 		return tag;
 
 	}
-	//InDev
-public HashMap<UUID,List<String>> getPlayerPermissions() {
-	HashMap<UUID,List<String>> rslt = new HashMap<UUID,List<String>>();
-	Statement statement;
-	ResultSet result = null;
-	try {
-		statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		result = statement.executeQuery("SELECT `user` FROM permissions");
-		while(result.next()) {
-			
+
+	// InDev
+	public HashMap<UUID, List<String>> getPlayerPermissions() {
+		HashMap<UUID, List<String>> rslt = new HashMap<UUID, List<String>>();
+		Statement statement;
+		ResultSet result = null;
+		try {
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			result = statement.executeQuery("SELECT * FROM permissions");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
 		}
-
-	} catch (SQLException e) {
-		e.printStackTrace();
-
+		return rslt;
 	}
-	return rslt;
-}
 
 }
