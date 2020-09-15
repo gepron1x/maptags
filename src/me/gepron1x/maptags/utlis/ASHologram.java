@@ -26,7 +26,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 
 public class ASHologram {
 	private int entityID;
-	private Scoreboard board;
 	private WrapperPlayServerSpawnEntity spawn;
 	private WrapperPlayServerEntityMetadata meta;
 	private WrapperPlayServerEntityDestroy destroy;
@@ -34,9 +33,6 @@ public class ASHologram {
 	private Player handler;
 
 	public ASHologram(Player p, String name, EntityType type,Location loc,boolean isGlowing) {
-		ScoreboardManager manager = Bukkit.getScoreboardManager();
-		this.board = manager.getNewScoreboard();
-		this.board.registerNewTeam("dump");
 		UUID uuid = UUID.randomUUID();
 	   
 		this.name = name;
@@ -69,12 +65,11 @@ public class ASHologram {
 		this.meta.setMetadata(obj);
 		this.destroy.setEntityIds(new int[] { entityID });
 		spawn();
+		
 	}
 
 	public void spawn() {
 		this.spawn.sendPacket(handler);
-		board.getTeam("dump").setColor(ChatColor.RED);
-		board.getTeam("dump").addEntry(this.spawn.getUniqueId().toString());
 		this.meta.sendPacket(handler);
 
 	}

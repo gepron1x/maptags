@@ -22,10 +22,10 @@ public class WayPoint {
 		plugin = MapTagsPlugin.getInstance();
 		this.target = target;
 		this.actionbar = plugin.getMessages().getString("waypoints.actionbar");
-		Location tloc = this.target.getLocation();
-		Location head = p.getLocation().add(0, p.getEyeHeight(), 0);
-		Vector direction = head.subtract(tloc).toVector().normalize().multiply(3);
-		this.hologram = new ASHologram(p, target.getName(), EntityType.ARMOR_STAND, /**/direction.toLocation(p.getWorld()), false);
+		//Location tloc = this.target.getLocation();
+		//Location head = p.getLocation().add(0, p.getEyeHeight(), 0);
+		//Vector direction = head.subtract(tloc).toVector().normalize().multiply(3);
+		this.hologram = new ASHologram(p, target.getName(), EntityType.ARMOR_STAND, /**/p.getLocation(), false);
 		this.glow = new ASHologram(p, Colors.paint("&cИди сюда!"), EntityType.ARMOR_STAND, target.getLocation(), true);
 		glow.spawn();
 		hologram.spawn();
@@ -34,15 +34,19 @@ public class WayPoint {
 	private String getActionBar() {
 		Integer distance = (int) player.getLocation().distance(target.getLocation());
 		String temp = actionbar.replace("%distance%", distance.toString()).replaceAll("%maptag%", target.getName());
-
+     
 		return temp;
 	}
 
 	public void onMove() {
 		String msg = getActionBar();
-	    Location loc = target.getLocation();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
-		hologram.setLocation(loc);
+		Location tloc = this.target.getLocation();
+		Location head = player.getLocation().add(0, player.getEyeHeight(), 0);
+		Vector direction = head.subtract(tloc).toVector();
+		
+		player.sendMessage(direction.toLocation(player.getWorld()).toString());
+		hologram.setLocation(direction.toLocation(player.getWorld()));
 		hologram.setName(msg);
 
 	}
