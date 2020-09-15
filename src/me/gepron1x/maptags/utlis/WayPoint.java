@@ -37,7 +37,7 @@ public class WayPoint {
 		return temp;
 	}
 
-	public void onMove(Player p) {
+	public void onMove() {
 		String msg = getActionBar();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
 		Location tloc = this.target.getLocation();
