@@ -360,8 +360,10 @@ public HashMap<UUID,List<String>> getPlayerPermissions() {
 	ResultSet result = null;
 	try {
 		statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		result = statement.executeQuery("SELECT * FROM permissions");
-		
+		result = statement.executeQuery("SELECT `user` FROM permissions");
+		while(result.next()) {
+			
+		}
 
 	} catch (SQLException e) {
 		e.printStackTrace();
