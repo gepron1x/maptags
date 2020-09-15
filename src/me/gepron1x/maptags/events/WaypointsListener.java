@@ -37,7 +37,7 @@ public class WaypointsListener implements Listener {
 		if (point == null)
 			return;
 		
-		point.onMove();
+		point.onMove(p);
 		
 		if (point.getDistance() <= 1) {
 			p.sendMessage(reached);

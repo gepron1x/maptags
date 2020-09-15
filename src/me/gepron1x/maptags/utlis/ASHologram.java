@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.util.Vector;
 
 import com.comphenix.packetwrapper.WrapperPlayServerEntityDestroy;
 import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
@@ -74,10 +75,11 @@ public class ASHologram {
 
 	}
 
-	public void setLocation(Location loc) {
+	public void setLocation(Location loc, Location target) {
 		WrapperPlayServerEntityTeleport teleport = new WrapperPlayServerEntityTeleport();
 		teleport.setEntityID(entityID);
 		//
+		Vector direction = target.subtract(loc).toVector().normalize().multiply(3);
 		teleport.setX(loc.getX());
 		teleport.setY(loc.getY());
 		teleport.setZ(loc.getZ());
