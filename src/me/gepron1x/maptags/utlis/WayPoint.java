@@ -42,7 +42,7 @@ public class WayPoint {
 		String msg = getActionBar();
 	    Location loc = target.getLocation();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
-		hologram.setLocation();
+		hologram.setLocation(loc);
 		hologram.setName(msg);
 
 	}
