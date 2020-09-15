@@ -48,6 +48,9 @@ public class WaypointsListener implements Listener {
 	}
 
 	public void addWayPoint(Player p, MapTag tag) {
+		if(waypoints.get(p.getUniqueId()) != null) {
+			removeWayPoint(p);
+		}
 		WayPoint point = new WayPoint(tag,p);
 		waypoints.put(p.getUniqueId(), point);
 		

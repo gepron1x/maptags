@@ -35,7 +35,7 @@ public class MapTagsPlugin extends JavaPlugin {
 	private static MapTagsPlugin instance;
 	private File tagsFile = new File(getDataFolder(), "tags.yml");
 	private FileConfiguration mapTags;
-	private HashMap<UUID,List<String>> permissions;
+	//private HashMap<UUID,List<String>> permissions;
 	WaypointsListener waypoints;
 	private File msgFile = new File(getDataFolder(), "messages.yml");
 	private FileConfiguration messages;
@@ -52,7 +52,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		mapTags = YamlConfiguration.loadConfiguration(tagsFile);
-		this.permissions = new HashMap<UUID,List<String>>();
+		//this.permissions = new HashMap<UUID,List<String>>();
 		
 		saveCustomDefaultConfig();
 		saveDefaultMessages();

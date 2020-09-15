@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -91,7 +92,7 @@ public class CommandManager implements CommandExecutor {
 		if (args[4].equalsIgnoreCase("local"))
 			isLocal = true;
 		main.addTag(args[1], args[2], args[3], p, isLocal);
-        
+        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 10, 1);
 	}
 
 	private void removeCommand(CommandSender sender, String[] args) {
@@ -107,7 +108,6 @@ public class CommandManager implements CommandExecutor {
 			gui = new GlobalMapTagsGUI(main.getGlobalList(), main.getConfig().getString("gui.list.title.global"));
 		}
 		p.openInventory(gui.getInventory());
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -118,7 +118,7 @@ public class CommandManager implements CommandExecutor {
 			playertoshare = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
 		} else {
 			playertoshare = pl.getUniqueId();
-		}
+		} 
 		Player p = (Player) sender;
 		String id = args[2];
 		MapTag tag = main.getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId())).findAny()
@@ -140,6 +140,7 @@ public class CommandManager implements CommandExecutor {
 			main.getMySQL().removePermission(playertoshare, id);
 			if(pl != null) pl.sendMessage(unshared);
 		}
+		p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 10, 1);
 	}
 
 	private void editCommand(CommandSender sender, String[] args) {
