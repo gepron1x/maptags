@@ -14,26 +14,36 @@ public class WayPoint {
 	private ASHologram glow;
 	private Player player;
 	private String actionbar;
-	private boolean isHologramsEnabled;
+	private boolean isHologramsEnabled,isActionBarEnabled,isDistanceHologramEnabled,isGlowEnabled;
 	private MapTagsPlugin plugin;
 
 	public WayPoint(MapTag target, Player p) {
+		
 		this.player = p;
 		plugin = MapTagsPlugin.getInstance();
 		this.target = target;
 		isHologramsEnabled = plugin.getConfig().getBoolean("waypoints.holograms.enabled");
+		isActionBarEnabled = plugin.getConfig().getBoolean("waypoints.actionbar.enabled");
+		isDistanceHologramEnabled = plugin.getConfig().getBoolean("waypoints.holograms.distance.enabled");
+		isGlowEnabled = plugin.getConfig().getBoolean("waypoints.holograms.podzkazka.enabled");
+		if(isHologramsEnabled == false) {
+			isDistanceHologramEnabled = false;
+			isGlowEnabled = false;
+		}
 		this.actionbar = Colors.paint(plugin.getMessages().getString("waypoints.distance"));
 		Location tloc = this.target.getLocation().clone();
 		Location head = p.getLocation().add(0, p.getEyeHeight(), 0);
 		Vector direction = tloc.subtract(head).toVector().normalize().multiply(5);
-	  if(plugin.getConfig().getBoolean("waypoints.hologram.distance") && isHologramsEnabled) {
+	
+	 if(isDistanceHologramEnabled) {
 		this.hologram = new ASHologram(p, target.getName(), EntityType.ARMOR_STAND, p.getLocation().add(direction), false);
 		hologram.spawn();
 	  }
-	  if(plugin.getConfig().getBoolean("waypoints.hologram.podskazka") && isHologramsEnabled) {
-		  this.glow = new ASHologram(p, Colors.paint(plugin.getConfig().getString("waypoints.holograms.podskazka.text")), EntityType.ARMOR_STAND, target.getLocation(), true);
+	  if(isGlowEnabled) {
+		  this.glow = new ASHologram(p, Colors.paint(plugin.getConfig().getString("waypoints.holograms.podzkazka.text")), EntityType.ARMOR_STAND, target.getLocation(), true);
 			glow.spawn();
-	  }
+	}
+	 
 		
 		
 	}
@@ -47,11 +57,11 @@ public class WayPoint {
 
 	public void onMove() {
 		String msg = getActionBar();
-		if(plugin.getConfig().getBoolean("waypoints.actionbar"))
+		if(isActionBarEnabled)
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
 		Location tloc = this.target.getLocation().clone();
 		Location head = player.getLocation().add(0, player.getEyeHeight(), 0);
-	   if(plugin.getConfig().getBoolean("waypoints.hologram.distance") && isHologramsEnabled) {
+	  if(isDistanceHologramEnabled) {
 		   hologram.setLocation(head, tloc);
 			hologram.setName(msg);  
 	   }
@@ -60,9 +70,9 @@ public class WayPoint {
 	}
 
 	public void destroy() {
-	  if(plugin.getConfig().getBoolean("waypoints.hologram.podzkazka") && isHologramsEnabled)
+	  if(isGlowEnabled)
 		glow.destroy();
-	  if(plugin.getConfig().getBoolean("waypoints.hologram.distance") && isHologramsEnabled)
+	 if(isDistanceHologramEnabled)
 		hologram.destroy();
 	}
 
@@ -70,4 +80,17 @@ public class WayPoint {
 		return (int) player.getLocation().distance(target.getLocation());
 	}
 
+
+public void respawnHolos(Player p) {
+	this.player = p;
+	
+	if(isDistanceHologramEnabled) {
+		hologram.setHandler(p);
+		hologram.spawn();
+	}
+	if(isGlowEnabled) {
+		glow.setHandler(p);
+		glow.spawn();
+	}
+}
 }

@@ -22,7 +22,7 @@ import me.gepron1x.maptags.utlis.MapTag;
 public class CommandManager implements CommandExecutor {
 
 	public MapTagsPlugin main = MapTagsPlugin.getInstance();
-	private String shared,unshared,unselected,notOwner,playeronly,tagnotexists,notinownregion,nopermission;
+	private String shared,unshared,unselected,notOwner,playeronly,tagnotexists,notinownregion,nopermission,playerdoesnotexists;
 	
      public CommandManager() {
     	 
@@ -30,11 +30,11 @@ public class CommandManager implements CommandExecutor {
     	 
      }
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
+		 boolean hasPermission = sender.hasPermission("maptags.user") || sender.hasPermission("maptags.admin");
 		if (args.length == 0)
 			return true;
 		if (sender instanceof Player) {
-			if(sender.hasPermission("maptags.user") || sender.hasPermission("maptags.admin")) {
+			if(hasPermission) {
 				switch (args[0]) {
 				
 				case "create":
@@ -136,6 +136,9 @@ public class CommandManager implements CommandExecutor {
 		} else {
 			playertoshare = pl.getUniqueId();
 		} 
+		if(playertoshare == null) {
+			sender.sendMessage(playerdoesnotexists);
+		}
 		Player p = (Player) sender;
 		String id = args[2];
 		MapTag tag = main.getGlobalList().stream().filter(marker -> id.equalsIgnoreCase(marker.getId())).findAny()
@@ -212,12 +215,13 @@ public class CommandManager implements CommandExecutor {
 
 	}
 public void reloadMessages() {
+	this.playerdoesnotexists = Colors.paint(main.getMessages().getString("command.share.playerdoesnotexists"));
 	this.nopermission = Colors.paint(main.getMessages().getString("command.noPermission"));
 	this.notinownregion = Colors.paint(main.getMessages().getString("worldguard.notInOwnRegion"));
 	this.playeronly = Colors.paint(main.getMessages().getString("command.player-only"));
 	this.notOwner = Colors.paint(main.getMessages().getString("command.notowner"));
-	this.shared = Colors.paint(main.getMessages().getString("command.shared"));
-	this.unshared = Colors.paint(main.getMessages().getString("command.unshared"));
+	this.shared = Colors.paint(main.getMessages().getString("command.share.shared"));
+	this.unshared = Colors.paint(main.getMessages().getString("command.share.unshared"));
 	this.unselected = Colors.paint(main.getMessages().getString("command.unselected"));
 	this.tagnotexists = Colors.paint(main.getMessages().getString("command.notexists"));
 }

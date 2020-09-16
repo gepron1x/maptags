@@ -47,9 +47,6 @@ public class MapTagsPlugin extends JavaPlugin {
 		mySQL = new MySQLWorker();
 		messages = YamlConfiguration.loadConfiguration(msgFile);
 		//this.permissions = new HashMap<UUID,List<String>>();
-		
-		
-	
 		manager = new CommandManager();
 		tabcompleter = new TabCompleteManager();
 		setupWorldGuard();

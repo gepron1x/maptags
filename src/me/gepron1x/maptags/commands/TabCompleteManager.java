@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import com.comphenix.protocol.utility.Util;
+
 import me.gepron1x.maptags.MapTagsPlugin;
 
 public class TabCompleteManager implements TabCompleter {
@@ -17,14 +19,8 @@ public class TabCompleteManager implements TabCompleter {
 	MapTagsPlugin main = MapTagsPlugin.getInstance();
 
 	public TabCompleteManager() {
-		subcommands = new ArrayList<>();
+		subcommands = Util.asList("create","remove","list","share","unshare","help");
 		editparameters = new ArrayList<>();
-		subcommands.add("create");
-		subcommands.add("remove");
-		subcommands.add("list");
-		subcommands.add("share");
-		subcommands.add("unshare");
-		subcommands.add("help");
 		editparameters.add("name");
 		editparameters.add("lore");
 		editparameters.add("location");
@@ -33,9 +29,10 @@ public class TabCompleteManager implements TabCompleter {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
+        boolean hasPermission = sender.hasPermission("maptags.user") || sender.hasPermission("maptags.admin");
 		List<String> result = new ArrayList<>();
-		if (args.length > 0 && sender instanceof Player) {
+		if (args.length > 0 && sender instanceof Player && hasPermission) {
+			
 			Player p = (Player) sender;
 
 			switch (args[0]) {
@@ -48,7 +45,6 @@ public class TabCompleteManager implements TabCompleter {
 				if (args.length == 3) {
 					result = filter(main.getPlayerTagsAsIds(p, true),args[2]);
 				}
-				break;
 			case "edit":
 				if (args.length == 2) {
 					result = main.getPlayerTagsAsIds(p, false);
@@ -56,23 +52,24 @@ public class TabCompleteManager implements TabCompleter {
 					result = filter(editparameters,args[2]);
 				}
 				break;
+			case "list":
+				if(args.length == 2) {
+					 result = filter(Util.asList("local","global"),args[1]);
+				}
+				break;
+			default: 
+				result = filter(subcommands,args[0]);
+				break;
 
 			}
-
-		} else if (args.length <= 1 || args[0].equalsIgnoreCase("")) {
-
-			result = subcommands;
-
 		}
-
 		return result;
-
 	}
 	private List<String> filter(List<String> inp,String s) {
 		if(s == null || s == "") {
 			return inp;
 		}
-		return inp.stream().filter(marker -> marker.startsWith(s)).collect(Collectors.toList());
+		return inp.stream().filter(marker -> marker.startsWith(s) || marker.equals(s)).collect(Collectors.toList());
 	}
 
 }

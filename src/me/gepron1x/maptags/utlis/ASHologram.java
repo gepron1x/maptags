@@ -75,7 +75,8 @@ public class ASHologram {
 		teleport.setEntityID(entityID);
 		//
 		Vector direction = target.subtract(loc).toVector().normalize().multiply(3);
-		Location l = loc.add(direction);
+		//Location l = loc.add(direction);
+		Location l = loc.add(direction.getX(), 0, direction.getZ());
 		teleport.setX(l.getX());
 		teleport.setY(l.getY());
 		teleport.setZ(l.getZ());
@@ -93,6 +94,9 @@ public class ASHologram {
 	}
 	public void destroy() {
 		this.destroy.sendPacket(handler);
+	}
+	public void setHandler(Player p) {
+		this.handler = p;
 	}
 	public String getName() {
 		return name;

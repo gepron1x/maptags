@@ -11,6 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import com.google.gson.Gson;
 
+import me.gepron1x.maptags.MapTagsPlugin;
+
 public class MapTag {
 
 	private String id, name;
@@ -19,9 +21,10 @@ public class MapTag {
 	private Location location;
 	private ItemStack icon;
 	private boolean isLocal;
-
+    private MapTagsPlugin plugin;
 	public MapTag(String id, String name, List<String> lore, UUID owner, Location loc, ItemStack icon,
 			boolean isLocal) {
+		this.plugin = MapTagsPlugin.getInstance();
 		this.isLocal = isLocal;
 		this.id = id;
 		this.name = name;
@@ -41,18 +44,10 @@ public class MapTag {
 
 	public ItemStack toItemStack() {
 		// ItemStack result = this.icon;
-		List<String> loredump = new ArrayList<String>();
-		loredump.addAll(lore);
+		List<String> loredump = setupLore(plugin.getConfig().getStringList("maptag.lore"));
 		ItemStack result = icon;
 		ItemMeta meta = result.getItemMeta();
 		meta.setDisplayName(name);
-		loredump.add(Colors.paint("&fМир: " + location.getWorld().getName()));
-		int x = (int) location.getX();
-		int y = (int) location.getY();
-		int z = (int) location.getZ();
-		loredump.add(Colors.paint("&f" + x + " " + y + " " + z));
-		loredump.add(Colors.paint("&fВладелец: " + getPlayerName(owner)));
-		loredump.add("id: " + getId());
 		meta.setLore(loredump);
 		result.setItemMeta(meta);
 		return result;
@@ -103,16 +98,51 @@ public class MapTag {
 	public boolean getIsLocal() {
 		return isLocal;
 	}
+   private String getWorldAsString() {
+	   for(String wrld : plugin.getConfig().getStringList("maptag.lore.worlds")) {
+		   String[] temp = wrld.split(":");
+		   String worldid = temp[0];
+		   String replacement = temp[1];
+		   if(location.getWorld().getName() == worldid) {
+			   return Colors.paint(replacement);
+		   }
+	   }
+	return location.getWorld().getName();
+	   
+   }
 
-	private String getPlayerName(UUID player) {
+	private String getPlayerName() {
 		String nick = "";
-		Player p = Bukkit.getPlayer(player);
+		Player p = Bukkit.getPlayer(owner);
 		if (p == null) {
-			nick = Bukkit.getOfflinePlayer(player).getName();
+			nick = Bukkit.getOfflinePlayer(owner).getName();
 
 		} else {
 			nick = p.getDisplayName();
 		}
 		return nick;
+	}
+private String getStringLocation() {
+	Integer x = (int) location.getX();
+	Integer y = (int) location.getY();
+	Integer z = (int) location.getZ();
+	return Colors.paint("&f" + x + " " + y + " " + z);
+}
+	private List<String> setupLore(List<String> lore) {
+		List<String> result = new ArrayList<>();
+		for(String component : lore) {
+		 if(component.equals("%lore%")) {
+			 result.addAll(Colors.paintList(lore));
+			 continue;
+		 }
+			String temp = component
+					.replace("%owner%", getPlayerName())
+					.replace("%location%", getStringLocation())
+					.replace("%name%", this.name)
+					.replace("%world%", getWorldAsString())
+					.replace("%id%", this.id);
+		      result.add(Colors.paint(temp));
+		}
+		return result;
 	}
 }

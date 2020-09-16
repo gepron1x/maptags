@@ -24,11 +24,11 @@ public class Colors {
 			List<String> to = new ArrayList<String>();
 			lorear = to;
 		}
-		return lorear;
+		return paintList(lorear);
 	}
 
 	public static String buildName(String s) {
-		s = paint(s.replace('_', ' '));
+		s = paint(ChatColor.WHITE + s.replace('_', ' '));
 		return s;
 	}
 
@@ -41,7 +41,7 @@ public class Colors {
 	public static List<String> paintList(List<String> s) {
 		List<String> result = new ArrayList<String>();
 		for (String stroke : s) {
-			result.add(paint(stroke));
+			result.add(ChatColor.GRAY + paint(stroke));
 		}
 		return result;
 

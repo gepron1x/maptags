@@ -72,7 +72,7 @@ public class MySQLWorker {
 				try {
 					Statement statement = connection.createStatement();
 					statement.executeUpdate("CREATE TABLE IF NOT EXISTS maptags " + "(`id` VARCHAR(10), "
-							+ " name VARCHAR(20), " + " lore TINYTEXT," + " location TINYTEXT, " + " owner VARCHAR(36),"
+							+ " name VARCHAR(25), " + " lore TINYTEXT," + " location TINYTEXT, " + " owner VARCHAR(36),"
 							+ " icon BLOB," + " type ENUM('GLOBAL','LOCAL')," + " PRIMARY KEY (id))");
 					Statement statement2 = connection.createStatement();
 					statement2.executeUpdate("CREATE TABLE IF NOT EXISTS permissions " + "(`user` VARCHAR(36), "
