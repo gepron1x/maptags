@@ -47,7 +47,7 @@ public class MapTag {
 		List<String> loredump = setupLore(plugin.getConfig().getStringList("maptag.lore"));
 		ItemStack result = icon;
 		ItemMeta meta = result.getItemMeta();
-		meta.setDisplayName(name);
+		meta.setDisplayName(setupName());
 		meta.setLore(loredump);
 		result.setItemMeta(meta);
 		return result;
@@ -99,11 +99,11 @@ public class MapTag {
 		return isLocal;
 	}
    private String getWorldAsString() {
-	   for(String wrld : plugin.getConfig().getStringList("maptag.lore.worlds")) {
+	   for(String wrld : plugin.getConfig().getStringList("maptag.worlds")) {
 		   String[] temp = wrld.split(":");
 		   String worldid = temp[0];
 		   String replacement = temp[1];
-		   if(location.getWorld().getName() == worldid) {
+		   if(location.getWorld().getName().equals(worldid)) {
 			   return Colors.paint(replacement);
 		   }
 	   }
@@ -126,23 +126,30 @@ private String getStringLocation() {
 	Integer x = (int) location.getX();
 	Integer y = (int) location.getY();
 	Integer z = (int) location.getZ();
-	return Colors.paint("&f" + x + " " + y + " " + z);
+	return x + " " + y + " " + z;
 }
-	private List<String> setupLore(List<String> lore) {
+	private List<String> setupLore(List<String> inp) {
 		List<String> result = new ArrayList<>();
-		for(String component : lore) {
+		for(String component : inp) {
 		 if(component.equals("%lore%")) {
-			 result.addAll(Colors.paintList(lore));
+			 result.addAll(Colors.paintList(this.lore));
 			 continue;
 		 }
-			String temp = component
+			String temp = Colors.paint(component
 					.replace("%owner%", getPlayerName())
 					.replace("%location%", getStringLocation())
 					.replace("%name%", this.name)
 					.replace("%world%", getWorldAsString())
-					.replace("%id%", this.id);
+					.replace("%id%", this.id));
 		      result.add(Colors.paint(temp));
 		}
 		return result;
 	}
+private String setupName() {
+   for(String nme : plugin.getConfig().getStringList("customcolorname")) {
+	   String[] temp = nme.split(":");
+	   if(name.contains(temp[0])) return Colors.paint(temp[1]) + name;
+   }
+	return name;
+}
 }

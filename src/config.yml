@@ -45,8 +45,20 @@ waypoints:
   actionbar: 
     enabled: false
 maptag:
+  name: 'Метка %maptag%'
+  worlds:
+  - 'world:&aМир'
+  - 'world_nether:&cНезер'
+  - 'world_the_end:&eЭнд'
+  customcolorname:
+  - 'Дом:&a'
   lore:
   - '%lore%'
+  - 'Владелец: %owner%'
+  - 'Мир: %world%'
+  - 'Координаты: %location%'
+  - '&fid: %id%'
+  defaultItem: DIRT
  
 
 
