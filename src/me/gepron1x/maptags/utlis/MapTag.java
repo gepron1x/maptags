@@ -152,4 +152,7 @@ private String setupName() {
    }
 	return name;
 }
+public ItemStack getIcon() {
+	return this.icon;
+}
 }
