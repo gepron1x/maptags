@@ -1,11 +1,11 @@
 package me.gepron1x.maptags.utlis;
 
 import java.util.HashMap;
+
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -46,7 +46,7 @@ public class MainGUI implements InventoryHolder {
 		return gui;
 	}
 
-	public void executeAction(int slot, Player p) {
+	/*public void executeAction(int slot, Player p) {
 		String action = actions.get(slot);
 		switch (action) {
 		case "OPEN_GLOBAL_TAGS":
@@ -61,5 +61,5 @@ public class MainGUI implements InventoryHolder {
 			p.openInventory(local.getInventory());
 			break;
 		}
-	}
+	}*/
 }

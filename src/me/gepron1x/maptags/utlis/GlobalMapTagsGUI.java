@@ -7,16 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import me.gepron1x.maptags.MapTagsPlugin;
 
 public class GlobalMapTagsGUI implements InventoryHolder {
-	private MapTagsPlugin main;
 	private List<Inventory> pages;
 	Map<ItemStack, MapTag> clickables;
 	private List<MapTag> maptags = new ArrayList<MapTag>();
@@ -29,9 +25,15 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 	private ItemStack nextPage;
 	private ItemStack previousPage;
 	private ItemStack selected;
+	private ClickAction action;
+public enum ClickAction {
+	WAYPOINT,
+	REMOVE,
+	SELECT;
+}
 
-	public GlobalMapTagsGUI(List<MapTag> items, String title) {
-		main = MapTagsPlugin.getInstance();
+	public GlobalMapTagsGUI(List<MapTag> items, String title, ClickAction action) {
+		this.action = action;
 		updateSetup();
 		this.maptags = items;
 		this.clickables = new HashMap<ItemStack, MapTag>();
@@ -110,22 +112,17 @@ public class GlobalMapTagsGUI implements InventoryHolder {
 		return clickables.get(icon);
 
 	}
+	public ClickAction getClickAction() {
+		return action;
+		
+	}
 
 	public void updateSetup() {
-		this.nopage = buildItemStackFromConfig("gui.list.nopage");
-		this.nextPage = buildItemStackFromConfig("gui.list.nextPage");
-		this.previousPage = buildItemStackFromConfig("gui.list.previousPage");
-		this.selected = buildItemStackFromConfig("gui.list.selected");
+		this.nopage = Colors.buildItemStackFromConfig("gui.list.nopage");
+		this.nextPage = Colors.buildItemStackFromConfig("gui.list.nextPage");
+		this.previousPage = Colors.buildItemStackFromConfig("gui.list.previousPage");
+		this.selected = Colors.buildItemStackFromConfig("gui.list.selected");
 	}
+	
 
-	public ItemStack buildItemStackFromConfig(String path) {
-		ItemStack e = new ItemStack(Material.getMaterial(main.getConfig().getString(path + ".material")),
-				main.getConfig().getInt(path + ".amount"));
-		ItemMeta meta = e.getItemMeta();
-		meta.setDisplayName(Colors.paint(main.getConfig().getString(path + ".name")));
-		meta.setLore(Colors.paintList(main.getConfig().getStringList(path + ".lore")));
-		e.setItemMeta(meta);
-		return e;
-
-	}
 }

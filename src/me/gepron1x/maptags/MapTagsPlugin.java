@@ -105,6 +105,10 @@ public class MapTagsPlugin extends JavaPlugin {
 		return true;
 
 	}
+	public void removeTag(MapTag tag) {
+		maptags.remove(tag);
+		getMySQL().deleteTag(tag.getId());
+	}
 
 
 	public void reloadMessages() {
@@ -198,6 +202,10 @@ public class MapTagsPlugin extends JavaPlugin {
 
 		return result;
 	}
+   public List<MapTag> getPlayerTags(Player p) {
+	   List<MapTag> result = maptags.stream().filter(marker -> p.getUniqueId().equals(marker.getOwner())).collect(Collectors.toList());
+	   return result;
+   }
 
 	public void reloadMsgs() {
 		this.notinregion = Colors.paint(getMessages().getString("worldguard.notInOwnRegion"));

@@ -1,13 +1,14 @@
 mysql:
   host: 145.239.88.2:3306
   database: s1802_testdb
-  username: u1802_bQM41kpdVL
-  password: 'TV..agKoIwfq.rBsbrqMJ8zA'
+  username: u1845_caz1T2v2ft
+  password: '0=b+8zsztXD=qQHjSuQ+ZHRz'
 gui:
   list:
     title:
       local: 'Локальные метки №%page%'
       global: 'Глобальные метки №%page%'
+      remove: '&cУдаление метки'
     nopage:
       material: BARRIER
       amount: 1
@@ -32,6 +33,20 @@ gui:
       name: '&3Метка успешно выбрана!'
       lore: 
       - ''
+  confirmation:
+    title: 'Вы уверены?'
+    yeah:
+        material: ARROW
+        amount: 1
+        name: '&aДа'
+        lore:
+        - ''
+    nope: 
+        material: RED_WOOL
+        amount: 1
+        name: '&cНет'
+        lore:
+        - ''
 worldguard:
   enabled: false
 waypoints:

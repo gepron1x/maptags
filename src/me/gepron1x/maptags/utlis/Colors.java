@@ -8,6 +8,9 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import me.gepron1x.maptags.MapTagsPlugin;
 
 public class Colors {
 
@@ -45,6 +48,17 @@ public class Colors {
 		}
 		return result;
 
+	}
+	public static ItemStack buildItemStackFromConfig(String path) {
+		MapTagsPlugin main = MapTagsPlugin.getInstance();
+		ItemStack e = new ItemStack(Material.getMaterial(main.getConfig().getString(path + ".material")),
+				main.getConfig().getInt(path + ".amount"));
+		ItemMeta meta = e.getItemMeta();
+		meta.setDisplayName(Colors.paint(main.getConfig().getString(path + ".name")));
+		meta.setLore(Colors.paintList(main.getConfig().getStringList(path + ".lore")));
+		e.setItemMeta(meta);
+		return e;
+		
 	}
 
 }

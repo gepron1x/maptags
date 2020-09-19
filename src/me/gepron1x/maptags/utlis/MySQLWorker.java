@@ -3,6 +3,8 @@ package me.gepron1x.maptags.utlis;
 import java.sql.Connection;
 
 
+
+
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,8 +20,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import com.google.gson.Gson;
-import 
-
 import me.gepron1x.maptags.MapTagsPlugin;
 
 public class MySQLWorker {
@@ -102,13 +102,13 @@ public class MySQLWorker {
 				try {
 					PreparedStatement statement = connection.prepareStatement(
 							"INSERT INTO maptags (id,name,lore,location,owner,icon,type) VALUES (?,?,?,?,?,?,?)");
-					byte[] dump3 = tag.getIcon().serializeAsBytes();
+					
 					statement.setString(1, tag.getId());
 					statement.setString(2, tag.getName());
 					statement.setString(3, tag.getLoreJson());
 					statement.setString(4, tag.getSerializedLocation());
 					statement.setString(5, tag.getOwner().toString());
-					statement.setBytes(6, dump3);
+					statement.setString(6, tag.getSerializedIcon());
 					statement.setString(7, dump2);
 					statement.executeUpdate();
 				} catch (SQLException e) {
@@ -327,7 +327,6 @@ public class MySQLWorker {
 		MapTag tag = null;
 		String id;
 		try {
-			byte[] sericon = res.getBytes("icon");
 			id = res.getString("id");
 			@SuppressWarnings("unchecked")
 			List<String> lore = gson.fromJson(res.getString("lore"), new ArrayList<String>().getClass());
@@ -336,7 +335,8 @@ public class MySQLWorker {
 			Location loc = Location
 					.deserialize(gson.fromJson(res.getString("location"), new HashMap<String, Object>().getClass()));
 			UUID owner = UUID.fromString(res.getString("owner"));
-			//Map<String, Object> map = gson.fromJson(res.getString("icon"), new HashMap<String, Object>().getClass());
+			@SuppressWarnings("unchecked")
+			Map<String, Object> map = gson.fromJson(res.getString("icon"), new HashMap<String, Object>().getClass());
 			boolean isLocal = false;
 			switch (res.getString("type")) {
 			case "LOCAL":
@@ -348,7 +348,7 @@ public class MySQLWorker {
 
 			}
 			//ItemStack icon = ItemStack.deserialize(map);
-			ItemStack icon = ItemStack.deserializeBytes(sericon);
+			ItemStack icon = ItemStack.deserialize(map);
 			tag = new MapTag(id, name, lore, owner, loc, icon, isLocal);
 			return tag;
 		} catch (SQLException e) {

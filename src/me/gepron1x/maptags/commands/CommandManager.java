@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.Colors;
 import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
+import me.gepron1x.maptags.utlis.GlobalMapTagsGUI.ClickAction;
 import me.gepron1x.maptags.utlis.MapTag;
 
 public class CommandManager implements CommandExecutor {
@@ -112,17 +113,24 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	private void removeCommand(CommandSender sender, String[] args) {
-	main.removeTag(args[1], (Player) sender);
+		if(args.length == 1) {
+			Player p = (Player) sender;
+			GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getPlayerTags(p),main.getConfig().getString("gui.list.title.remove"),ClickAction.REMOVE);
+			p.openInventory(gui.getInventory());
+		} else {
+			main.removeTag(args[1], (Player) sender);
+		}
+	
 	
 	}
 	private void listCommand(CommandSender sender, String[] args) {
 		GlobalMapTagsGUI gui;
 		Player p = (Player) sender;
 		if (args.length == 2  && args[1].equalsIgnoreCase("local")) {
-			gui = new GlobalMapTagsGUI(main.getLocalList(p.getUniqueId()), main.getConfig().getString("gui.list.title.local"));
+			gui = new GlobalMapTagsGUI(main.getLocalList(p.getUniqueId()), main.getConfig().getString("gui.list.title.local"),ClickAction.WAYPOINT);
 
 		} else {
-			gui = new GlobalMapTagsGUI(main.getGlobalList(), main.getConfig().getString("gui.list.title.global"));
+			gui = new GlobalMapTagsGUI(main.getGlobalList(), main.getConfig().getString("gui.list.title.global"),ClickAction.WAYPOINT);
 		}
 		p.openInventory(gui.getInventory());
 	}
