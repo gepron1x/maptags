@@ -2,6 +2,7 @@ package me.gepron1x.maptags.commands;
 
 
 import java.util.List;
+
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,9 +17,9 @@ import com.google.gson.Gson;
 
 import me.gepron1x.maptags.MapTagsPlugin;
 import me.gepron1x.maptags.utlis.Colors;
-import me.gepron1x.maptags.utlis.GlobalMapTagsGUI;
-import me.gepron1x.maptags.utlis.GlobalMapTagsGUI.ClickAction;
 import me.gepron1x.maptags.utlis.MapTag;
+import me.gepron1x.maptags.utlis.gui.GlobalMapTagsGUI;
+import me.gepron1x.maptags.utlis.gui.GlobalMapTagsGUI.ClickAction;
 
 public class CommandManager implements CommandExecutor {
 
@@ -60,6 +61,7 @@ public class CommandManager implements CommandExecutor {
 					break;
 				
 				case "help":
+					
 					throwHelp(sender);
 					break;
 		

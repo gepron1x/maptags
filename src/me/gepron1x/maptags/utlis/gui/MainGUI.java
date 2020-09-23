@@ -1,4 +1,4 @@
-package me.gepron1x.maptags.utlis;
+package me.gepron1x.maptags.utlis.gui;
 
 import java.util.HashMap;
 

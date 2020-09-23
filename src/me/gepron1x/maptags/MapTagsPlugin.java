@@ -89,6 +89,7 @@ public class MapTagsPlugin extends JavaPlugin {
 		}
 	}
 
+
 	public boolean removeTag(String id, Player executor) {
 		MapTag tag = maptags.stream().filter(marker -> id.equalsIgnoreCase(marker.getId()) == true).findAny()
 				.orElse(null);
