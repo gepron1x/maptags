@@ -37,21 +37,22 @@ public class PlayerListGUI implements MultiPagedInv,InventoryHolder {
 	private ItemStack nextPage;
 	private MapTagsPlugin plugin = MapTagsPlugin.getInstance();
 	private ItemStack previousPage;
-  public PlayerListGUI(String title,MapTag shareto,Share type) {
+  public PlayerListGUI(String title,MapTag shareto,Share type,Player ignored) {
 	  pages = new ArrayList<Inventory>();
 	  this.type = type;
 	 this.title = title;
 	 this.tagtoshare = shareto;
 	  updateSetup();
-	  build();
+	  build(ignored);
      
   }
-  private void build() {
+  private void build(Player ignored) {
 	  int i = lastpage + 1;
 		Integer pg = i;
 		Inventory inv = Bukkit.createInventory(this, 6 * 9, title.replace("%page%", pg.toString()));
 		pages.clear();
 		for (Player p : Bukkit.getOnlinePlayers()) {
+			if(p.equals(ignored)) continue;
 			ItemStack ist = new ItemStack(Material.PLAYER_HEAD);
 			SkullMeta meta = (SkullMeta) ist.getItemMeta();
 			meta.setDisplayName(ChatColor.GRAY + p.getDisplayName());
@@ -132,7 +133,7 @@ public class PlayerListGUI implements MultiPagedInv,InventoryHolder {
 	public void ClickHandler(InventoryClickEvent e) {
 		e.setCancelled(true);
 		Player p = clickables.get(e.getCurrentItem());
-		if(p == null) return;
+		if(p == null || e.getCurrentItem().getType() == Material.AIR || e.getCurrentItem() == null) return;
 		switch(type) {
 		case SHARE:
 			plugin.getMySQL().setPlayerPermission(p.getUniqueId(), tagtoshare.getId());

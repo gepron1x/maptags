@@ -59,10 +59,13 @@ public class WayPoint {
 		String msg = getActionBar();
 		if(isActionBarEnabled)
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
-		Location tloc = this.target.getLocation().clone();
-		Location head = player.getLocation().add(0, player.getEyeHeight(), 0);
+	
 	  if(isDistanceHologramEnabled) {
-		   hologram.setLocation(head, tloc);
+			Location tloc = this.target.getLocation().clone();
+			Location head = player.getLocation().add(0, player.getEyeHeight(), 0);
+			Vector direction = tloc.subtract(head).toVector().normalize().multiply(3);
+			Location l = head.add(direction.getX(), 0, direction.getZ());
+		   hologram.setLocation(l);
 			hologram.setName(msg);  
 	   }
 		

@@ -61,7 +61,9 @@ public class CommandManager implements CommandExecutor {
 					break;
 				
 				case "help":
-					
+					Player p = (Player) sender;
+					GlobalMapTagsGUI gui = new GlobalMapTagsGUI(main.getLocalList(p.getUniqueId()),"Выберите метку",ClickAction.SELECT);
+					p.openInventory(gui.getInventory());
 					throwHelp(sender);
 					break;
 		
