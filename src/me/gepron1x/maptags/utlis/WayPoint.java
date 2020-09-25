@@ -11,7 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class WayPoint {
 	private MapTag target;
 	private ASHologram hologram;
-	private ASHologram glow;
+	private GlowingEntity glow;
 	private Player player;
 	private String actionbar;
 	private boolean isHologramsEnabled,isActionBarEnabled,isDistanceHologramEnabled,isGlowEnabled;
@@ -40,7 +40,7 @@ public class WayPoint {
 		hologram.spawn();
 	  }
 	  if(isGlowEnabled) {
-		  this.glow = new ASHologram(p, Colors.paint(plugin.getConfig().getString("waypoints.holograms.podzkazka.text")), EntityType.ARMOR_STAND, target.getLocation(), true);
+		  this.glow = new GlowingEntity(p, Colors.paint(plugin.getConfig().getString("waypoints.holograms.podzkazka.text")), EntityType.MAGMA_CUBE, target.getLocation());
 			glow.spawn();
 	}
 	 
