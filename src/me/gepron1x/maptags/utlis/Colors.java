@@ -2,6 +2,7 @@ package me.gepron1x.maptags.utlis;
 
 import java.util.ArrayList;
 
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import com.comphenix.protocol.utility.Util;
 
 import me.gepron1x.maptags.MapTagsPlugin;
 
@@ -24,8 +27,7 @@ public class Colors {
 		if (lore.split(";").length != 1) {
 			lorear = Arrays.asList(lore.split(";"));
 		} else {
-			List<String> to = new ArrayList<String>();
-			lorear = to;
+			lorear = Util.asList(lore);
 		}
 		return paintList(lorear);
 	}

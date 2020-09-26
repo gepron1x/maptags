@@ -11,7 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class WayPoint {
 	private MapTag target;
 	private ASHologram hologram;
-	private ASHologram glow;
+	private GlowingEntity glow;
 	private Player player;
 	private String actionbar;
 	private boolean isHologramsEnabled,isActionBarEnabled,isDistanceHologramEnabled,isGlowEnabled;
@@ -40,7 +40,7 @@ public class WayPoint {
 		hologram.spawn();
 	  }
 	  if(isGlowEnabled) {
-		  this.glow = new ASHologram(p, Colors.paint(plugin.getConfig().getString("waypoints.holograms.podzkazka.text")), EntityType.ARMOR_STAND, target.getLocation(), true);
+		  this.glow = new GlowingEntity(p, Colors.paint(plugin.getConfig().getString("waypoints.holograms.podzkazka.text")), EntityType.MAGMA_CUBE, target.getLocation());
 			glow.spawn();
 	}
 	 
@@ -59,10 +59,13 @@ public class WayPoint {
 		String msg = getActionBar();
 		if(isActionBarEnabled)
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
-		Location tloc = this.target.getLocation().clone();
-		Location head = player.getLocation().add(0, player.getEyeHeight(), 0);
+	
 	  if(isDistanceHologramEnabled) {
-		   hologram.setLocation(head, tloc);
+			Location tloc = this.target.getLocation().clone();
+			Location head = player.getLocation().add(0, player.getEyeHeight(), 0);
+			Vector direction = tloc.subtract(head).toVector().normalize().multiply(3);
+			Location l = head.add(direction.getX(), 0, direction.getZ());
+		   hologram.setLocation(l);
 			hologram.setName(msg);  
 	   }
 		

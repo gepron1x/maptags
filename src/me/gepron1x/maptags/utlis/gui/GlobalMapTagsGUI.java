@@ -213,7 +213,7 @@ private void executeAction(InventoryClickEvent e) {
 	}, 20);
 		break;
 	case SELECT:
-	   PlayerListGUI plist = new PlayerListGUI("Выберите игрока",gui.getClickedTag(e.getCurrentItem()),Share.SHARE);
+	   PlayerListGUI plist = new PlayerListGUI("Выберите игрока",gui.getClickedTag(e.getCurrentItem()),Share.SHARE,p);
 	   p.closeInventory();
 	   p.openInventory(plist.getInventory());
 		break;
